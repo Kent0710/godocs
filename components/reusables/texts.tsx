@@ -6,7 +6,7 @@ interface TextProps {
 }
 
 export function Title({ children, className }: TextProps) {
-    return <h1 className={`${className} text-4xl font-bold`}>{children}</h1>;
+    return <h1 className={`${className} text-3xl font-semibold`}>{children}</h1>;
 }
 
 export function Subtitle({ children, className }: TextProps) {

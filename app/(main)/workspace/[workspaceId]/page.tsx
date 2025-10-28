@@ -1,3 +1,4 @@
+import { BranchDropdown } from "@/components/branch/branch-dropdown";
 import DocumentArea from "@/components/document/document-area";
 import ToolBar from "@/components/document/toolbar";
 import {
@@ -6,25 +7,23 @@ import {
     PageContainerMain,
 } from "@/components/reusables/containers";
 import { Paragraph, Title } from "@/components/reusables/texts";
-import { Button } from "@/components/ui/button";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { ChevronDown, Download, GitBranch } from "lucide-react";
+import NewBranch from "@/components/workspace/new-branch";
 
 interface WorkspacePageProps {
     params: Promise<{
         workspaceId: string;
     }>;
+    searchParams?: Promise<{
+        branch?: string;
+    }>;
 }
 
-export default async function WorkspacePage({ params }: WorkspacePageProps) {
+export default async function WorkspacePage({
+    params,
+    searchParams,
+}: WorkspacePageProps) {
     const workspaceId = (await params).workspaceId;
+    const currentBranch = (await searchParams)?.branch || "main";
 
     if (!workspaceId) return <div> Workspace ID is missing </div>;
 
@@ -38,20 +37,15 @@ export default async function WorkspacePage({ params }: WorkspacePageProps) {
                     </Paragraph>
                 </div>
                 <div className="flex justify-between items-center">
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant={'outline'}>
-                                <GitBranch /> main <ChevronDown />
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent>
-                            <DropdownMenuLabel>Switch branches</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuItem>Introduction</DropdownMenuItem>
-                            <DropdownMenuItem>Review of Related Literature</DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                    <Button> <Download /> Download </Button>
+                    <div className="flex gap-2">
+                        <BranchDropdown
+                            workspaceId={workspaceId}
+                            currentBranch={currentBranch}
+                        />
+                        <NewBranch 
+                            workspaceId={workspaceId}
+                        />
+                    </div>
                 </div>
             </PageContainerHeader>
 
