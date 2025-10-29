@@ -7,7 +7,8 @@ import {
     PageContainerMain,
 } from "@/components/reusables/containers";
 import { Paragraph, Title } from "@/components/reusables/texts";
-import NewBranch from "@/components/workspace/new-branch";
+import NewBranch from "@/components/branch/new-branch";
+import Merge from "@/components/merge/merge";
 
 interface WorkspacePageProps {
     params: Promise<{
@@ -36,16 +37,13 @@ export default async function WorkspacePage({
                         Start writing and collaborating in your workspace.
                     </Paragraph>
                 </div>
-                <div className="flex justify-between items-center">
-                    <div className="flex gap-2">
-                        <BranchDropdown
-                            workspaceId={workspaceId}
-                            currentBranch={currentBranch}
-                        />
-                        <NewBranch 
-                            workspaceId={workspaceId}
-                        />
-                    </div>
+                <div className="flex gap-2">
+                    <BranchDropdown
+                        workspaceId={workspaceId}
+                        currentBranch={currentBranch}
+                    />
+                    <NewBranch workspaceId={workspaceId} />
+                    <Merge workspaceId={workspaceId} />
                 </div>
             </PageContainerHeader>
 
