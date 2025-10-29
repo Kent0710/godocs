@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { Button } from "./ui/button";
 import { LogOut, User } from "lucide-react";
@@ -13,6 +13,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { getUsername } from "@/actions/user/get-username";
 import { signOut } from "@/actions/auth";
 
 interface HeaderProps {
@@ -20,6 +21,8 @@ interface HeaderProps {
 }
 
 export default function Header({ className }: HeaderProps) {
+    const [username, setUsername] = useState<string>("");
+
     const router = useRouter();
 
     const pathname = usePathname();
@@ -27,6 +30,15 @@ export default function Header({ className }: HeaderProps) {
         () => [{ label: "Home", href: "/home", active: pathname === "/home" }],
         [pathname]
     );
+
+    useEffect(() => {
+        async function fetchUsername() {
+            const name = await getUsername();
+            setUsername(name);
+        }
+
+        fetchUsername();
+    }, []);
 
     return (
         <header
@@ -56,14 +68,15 @@ export default function Header({ className }: HeaderProps) {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant={"outline"}>
-                            <User /> John Doe
+                            <User /> {username}
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <Button variant={"ghost"}
+                        <Button
+                            variant={"ghost"}
                             onClick={async () => {
                                 await signOut();
-                                router.push("/signUp");
+                                router.push("/signIn");
                             }}
                         >
                             <LogOut /> Sign Out

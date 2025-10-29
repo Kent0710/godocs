@@ -4,6 +4,26 @@ import { auth } from "@/lib/firebase/firebase";
 import { cookies } from "next/headers";
 import { adminAuth } from "@/lib/firebase/admin";
 
+export async function getUserFromSession() {
+    const cookieStore = await cookies();
+    const sessionCookie = cookieStore.get("session")?.value;
+
+    if (!sessionCookie) {
+        return null;
+    }
+
+    try {
+        const decodedClaims = await adminAuth.verifySessionCookie(
+            sessionCookie,
+            true
+        );
+        return decodedClaims;
+    } catch (error) {
+        console.error("Error verifying session cookie:", error);
+        return null;
+    }
+}
+
 export async function setSession(idToken: string) {
     try {
         if (!idToken) throw new Error("ID token is required to set session");
@@ -23,7 +43,7 @@ export async function setSession(idToken: string) {
 
         return {
             status: "success",
-            message : "Session cookie set successfully",
+            message: "Session cookie set successfully",
         };
     } catch (error) {
         throw new Error("Error setting session: " + (error as Error).message);

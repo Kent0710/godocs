@@ -14,7 +14,8 @@ export const workspaceConverter: FirestoreDataConverter<WorkspaceType> = {
         return {
             name: workspace.name,
             description: workspace.description ?? "",
-            created_at: workspace.createdAt,
+            createdAt: workspace.createdAt,
+            ownerId: workspace.ownerId,
         };
     },
 
@@ -30,6 +31,7 @@ export const workspaceConverter: FirestoreDataConverter<WorkspaceType> = {
             createdAt: data.created_at?.toDate
                 ? data.created_at.toDate()
                 : data.created_at,
+            ownerId: data.ownerId,
         };
     },
 };

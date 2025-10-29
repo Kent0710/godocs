@@ -4,4 +4,5 @@ export interface WorkspaceType {
     name: string;
     description?: string;
     createdAt: Date;
+    ownerId: string; 
 }
