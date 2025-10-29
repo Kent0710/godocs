@@ -19,6 +19,8 @@ export default function DeleteWorkspace({ workspaceId }: DeleteWorkspaceProps) {
         if (result.success) {
             toast.success("Workspace deleted successfully!");
             router.push("/home");
+        } else {
+            toast.error("Failed to delete workspace.");
         }
     };
 

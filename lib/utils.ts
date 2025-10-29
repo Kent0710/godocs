@@ -5,20 +5,33 @@ export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export function formatDate(date: Date | string | number): string {
-    // Ensure we always have a Date object
-    const d = date instanceof Date ? date : new Date(date);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function formatDate(date : any): string {
+    let d: Date;
 
-    // Use Intl.DateTimeFormat for locale-safe, consistent output
-    const formatted = new Intl.DateTimeFormat("en-US", {
-        month: "short", // Jul
-        day: "numeric", // 5
-        year: "numeric", // 2025
-        hour: "numeric", // 5
-        minute: "2-digit", // 59
-        hour12: true, // 12-hour clock with AM/PM
-    }).format(d);
+    // Firestore Timestamp object (has a .toDate() function)
+    if (date && typeof date.toDate === "function") {
+        d = date.toDate();
+    }
+    // Already a Date
+    else if (date instanceof Date) {
+        d = date;
+    }
+    // String or number
+    else {
+        d = new Date(date);
+    }
 
-    // Replace comma after year with a pipe (optional aesthetic)
-    return formatted.replace(",", " |");
+    if (isNaN(d.getTime())) return "Invalid Date";
+
+    return new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+    })
+        .format(d)
+        .replace(",", " |");
 }

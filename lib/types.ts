@@ -6,3 +6,10 @@ export interface WorkspaceType {
     createdAt: Date;
     ownerId: string; 
 }
+
+export interface BranchType {
+    id: string; // Firestore doc ID
+    name: string;
+    workspaceId: string;
+    ownerId : string;
+}

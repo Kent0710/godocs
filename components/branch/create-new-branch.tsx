@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { Plus } from "lucide-react";
+import { Loader, Plus } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -33,13 +33,15 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
+import { createNewBranchFormSchema } from "@/lib/form-schemas";
 import { toast } from "sonner";
+import { createBranchAction } from "@/actions/branch/create-branch-action";
 
-interface NewBranchProps {
+interface CreateNewBranchProps {
     workspaceId?: string;
 }
 
-export default function NewBranch({ workspaceId }: NewBranchProps) {
+export default function CreateNewBranch({ workspaceId }: CreateNewBranchProps) {
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -55,39 +57,41 @@ export default function NewBranch({ workspaceId }: NewBranchProps) {
                         Configure your new branch
                     </DialogDescription>
                 </DialogHeader>
-                <NewBranchForm 
-                    workspaceId={workspaceId}
-                />
+                <NewBranchForm workspaceId={workspaceId} />
             </DialogContent>
         </Dialog>
     );
 }
 
-const formSchema = z.object({
-    name: z.string().min(2, "Branch name must be at least 1 characters."),
-    option: z.enum(["independent", "dependent"]).default("dependent"),
-});
-
-function NewBranchForm({ workspaceId }: NewBranchProps) {
+function NewBranchForm({ workspaceId }: CreateNewBranchProps) {
     const router = useRouter();
 
     const form = useForm({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(createNewBranchFormSchema),
         defaultValues: {
             name: "",
             option: "dependent",
         },
     });
 
-    const onSubmit = (data: z.infer<typeof formSchema>) => {
-        console.log(data);
-
+    const onSubmit = async (
+        data: z.infer<typeof createNewBranchFormSchema>
+    ) => {
         if (!workspaceId) {
             toast.error("Workspace ID is missing.");
             return;
         }
 
-        router.push(`/workspace/${workspaceId}?branch=${data.name}`);
+        toast.loading("Creating branch...");
+        const result = await createBranchAction(workspaceId, data);
+        toast.dismiss();
+
+        if (result.success) {
+            toast.success("Branch created successfully!");
+            router.push(`/workspace/${workspaceId}?branch=${data.name}`);
+        } else {
+            toast.error(`Failed to create branch.`);
+        }
     };
 
     return (
@@ -139,7 +143,15 @@ function NewBranchForm({ workspaceId }: NewBranchProps) {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Create Branch</Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? (
+                        <>
+                            <Loader /> Creating branch...
+                        </>
+                    ) : (
+                        "Create Branch"
+                    )}
+                </Button>
             </form>
         </Form>
     );

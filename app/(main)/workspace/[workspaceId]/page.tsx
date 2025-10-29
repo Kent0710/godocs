@@ -7,10 +7,11 @@ import {
     PageContainerMain,
 } from "@/components/reusables/containers";
 import { Title } from "@/components/reusables/texts";
-import NewBranch from "@/components/branch/new-branch";
+import CreateNewBranch from "@/components/branch/create-new-branch";
 import Merge from "@/components/merge/merge";
 import History from "@/components/history/history";
 import DeleteWorkspace from "@/components/workspace/delete-workspace";
+import { DeleteBranch } from "@/components/branch/delete-branch";
 
 interface WorkspacePageProps {
     params: Promise<{
@@ -45,8 +46,12 @@ export default async function WorkspacePage({
                         currentBranch={currentBranch}
                     />
                     <History workspaceId={workspaceId} />
-                    <NewBranch workspaceId={workspaceId} />
+                    <CreateNewBranch workspaceId={workspaceId} />
                     <Merge workspaceId={workspaceId} />
+                    <DeleteBranch 
+                        workspaceId={workspaceId} 
+                        currentBranchId={currentBranch} 
+                    />
                 </div>
             </PageContainerHeader>
 

@@ -1,5 +1,3 @@
-"use client";
-
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,40 +9,42 @@ import {
 import { Button } from "../ui/button";
 import { GitBranch, ChevronDown } from "lucide-react";
 
-import { useRouter } from "next/navigation";
+import { getWorkspaceBranches } from "@/actions/branch/get-branches-action";
+import BranchDropdownItem from "./branch-dropdown-item";
 
 interface BranchDropdownProps {
     workspaceId: string;
     currentBranch?: string;
 }
 
-export function BranchDropdown({ workspaceId, currentBranch = 'main' }: BranchDropdownProps) {
-    const router = useRouter();
-    const branches = ["main", "introduction", "review-of-related-literature"];
+export async function BranchDropdown({
+    workspaceId,
+    currentBranch,
+}: BranchDropdownProps) {
+    const branches = await getWorkspaceBranches(workspaceId);
 
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant={"outline"}>
-                    <GitBranch /> main <ChevronDown />
+                    <GitBranch /> {currentBranch} <ChevronDown />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuLabel>Switch branches</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {branches.map((branch) => (
-                    <DropdownMenuItem
-                        key={branch}
-                        onSelect={() => {
-                            router.push(
-                                `/workspace/${workspaceId}?branch=${branch}`
-                            );
-                        }}
-                        className={currentBranch === branch ? "text-blue-500" : ""}
-                    >
-                        {branch}
-                    </DropdownMenuItem>
-                ))}
+                {branches.length === 0 ? (
+                    <DropdownMenuItem>No branches found</DropdownMenuItem>
+                ) : (
+                    branches.map((branch) => (
+                        <BranchDropdownItem
+                            key={branch.id}
+                            branch={branch}
+                            workspaceId={workspaceId}
+                            currentBranch={currentBranch}
+                        />
+                    ))
+                )}
             </DropdownMenuContent>
         </DropdownMenu>
     );
