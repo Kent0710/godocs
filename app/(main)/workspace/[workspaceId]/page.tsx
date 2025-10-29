@@ -6,10 +6,11 @@ import {
     PageContainerHeader,
     PageContainerMain,
 } from "@/components/reusables/containers";
-import { Paragraph, Title } from "@/components/reusables/texts";
+import { Title } from "@/components/reusables/texts";
 import NewBranch from "@/components/branch/new-branch";
 import Merge from "@/components/merge/merge";
 import History from "@/components/history/history";
+import DeleteWorkspace from "@/components/workspace/delete-workspace";
 
 interface WorkspacePageProps {
     params: Promise<{
@@ -32,11 +33,11 @@ export default async function WorkspacePage({
     return (
         <PageContainer>
             <PageContainerHeader>
-                <div className="pb-4 border-b mb-4">
+                <div className="pb-4 border-b mb-4 flex justify-between items-center">
                     <Title>Workspace: {workspaceId}</Title>
-                    <Paragraph>
-                        Start writing and collaborating in your workspace.
-                    </Paragraph>
+                    <div>
+                        <DeleteWorkspace workspaceId={workspaceId} />
+                    </div>
                 </div>
                 <div className="flex gap-2">
                     <BranchDropdown

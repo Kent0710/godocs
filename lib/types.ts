@@ -1,5 +1,7 @@
+// types/workspace.ts
 export interface WorkspaceType {
-    id: string;
+    id: string; // Firestore doc ID
     name: string;
     description?: string;
+    createdAt: Date;
 }

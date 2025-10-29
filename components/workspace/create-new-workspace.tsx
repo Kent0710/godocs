@@ -9,8 +9,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { FilePlus2 } from "lucide-react";
-import { Subtitle } from "../reusables/texts";
+import { FilePlus2, Loader } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -20,22 +19,26 @@ import { Button } from "@/components/ui/button";
 import {
     Form,
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+
+import { createNewWorkspaceFormSchema } from "@/lib/form-schemas";
+import { createWorkspace } from "@/actions/workspace/create-workspace";
+import { useRouter } from "next/navigation";
 
 export default function CreateNewWorkspace() {
     return (
         <Dialog>
-            <DialogTrigger className="flex flex-col items-center justify-center border p-4 rounded">
-                <>
-                    <FilePlus2 size={48} className="mb-4 " />
-                    <Subtitle>Create New Workspace</Subtitle>
-                </>
+            <DialogTrigger asChild>
+                <Button variant={"outline"}>
+                    <FilePlus2 className="mr-2" />
+                    New Workspace
+                </Button>
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
@@ -52,24 +55,29 @@ export default function CreateNewWorkspace() {
 
 // THE ACTUAL FORM
 
-const formSchema = z.object({
-    name: z.string().min(2, {
-        message: "Workspace name must be at least 1 characters.",
-    }),
-    description: z.string().optional(),
-});
+function CreateNewWorkspaceForm() {
+    const router = useRouter();
 
-export function CreateNewWorkspaceForm() {
     const form = useForm({
-        resolver: zodResolver(formSchema),
+        resolver: zodResolver(createNewWorkspaceFormSchema),
         defaultValues: {
             name: "",
             description: "",
         },
     });
 
-    const onSubmit = (data: z.infer<typeof formSchema>) => {
-        console.log(data);
+    const onSubmit = async (
+        data: z.infer<typeof createNewWorkspaceFormSchema>
+    ) => {
+        const result = await createWorkspace(data);
+        if (result.success) {
+            toast.success("Workspace created successfully!");
+            form.reset();
+
+            router.push(`/workspace/${result.workspaceId}`);
+        } else {
+            toast.error("Failed to create workspace.");
+        }
     };
 
     return (
@@ -107,7 +115,16 @@ export function CreateNewWorkspaceForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Create Workspace</Button>
+                <Button type="submit" disabled={form.formState.isSubmitting}>
+                    {form.formState.isSubmitting ? (
+                        <>
+                            <Loader className="animate-spin" /> Creating
+                            workspace...
+                        </>
+                    ) : (
+                        "Create Workspace"
+                    )}
+                </Button>
             </form>
         </Form>
     );
