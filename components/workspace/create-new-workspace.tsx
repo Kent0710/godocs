@@ -74,7 +74,7 @@ function CreateNewWorkspaceForm() {
             toast.success("Workspace created successfully!");
             form.reset();
 
-            router.push(`/workspace/${result.workspaceId}`);
+            router.push(`/workspace/${result.workspaceId}?branch=${result.defaultBranchId}`);
         } else {
             toast.error("Failed to create workspace.");
         }

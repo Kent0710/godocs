@@ -44,6 +44,7 @@ export const branchConverter: FirestoreDataConverter<BranchType> = {
             name: branch.name,
             workspaceId: branch.workspaceId,
             ownerId : branch.ownerId,
+            content : branch.content,
         };
     },
 
@@ -57,6 +58,7 @@ export const branchConverter: FirestoreDataConverter<BranchType> = {
             name: data.name,
             workspaceId: data.workspaceId,
             ownerId : data.ownerId,
+            content : data.content,
         };
     }
 };

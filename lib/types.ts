@@ -5,6 +5,7 @@ export interface WorkspaceType {
     description?: string;
     createdAt: Date;
     ownerId: string; 
+    mainBranchId : string;
 }
 
 export interface BranchType {
@@ -12,4 +13,6 @@ export interface BranchType {
     name: string;
     workspaceId: string;
     ownerId : string;
+    content : string;
 }
+

@@ -25,18 +25,20 @@ export async function createWorkspace(
             content :"",
         });
 
-        // create teh main branch for the workspace
+        // create the main branch for the workspace
         // this is required for the workspace to function properly and would not be allowed to be deleted
-        await addDoc(collection(db, "branch"), {
+        const defaultBranch = await addDoc(collection(db, "branch"), {
             name: "main",
             workspaceId: newWorkspace.id,
-            onwerId : user.uid,
+            ownerId : user.uid,
+            content : "",
         });
 
         revalidatePath("/home");
 
         return {
             workspaceId: newWorkspace.id,
+            defaultBranchId: defaultBranch.id,
             success: true,
         };
     } catch (error) {

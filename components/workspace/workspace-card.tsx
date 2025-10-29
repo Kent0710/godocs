@@ -12,7 +12,9 @@ interface WorkspaceCardProps {
 export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
     return (
         <li className="p-4 rounded border">
-            <Link href={`/workspace/${workspace.id}`}>
+            <Link
+                href={`/workspace/${workspace.id}?branch=${workspace.mainBranchId}`}
+            >
                 <Badge variant={"outline"} className="mb-2">
                     {formatDate(workspace.createdAt)}
                 </Badge>

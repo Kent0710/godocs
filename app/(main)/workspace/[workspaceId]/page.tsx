@@ -12,6 +12,7 @@ import Merge from "@/components/merge/merge";
 import History from "@/components/history/history";
 import DeleteWorkspace from "@/components/workspace/delete-workspace";
 import { DeleteBranch } from "@/components/branch/delete-branch";
+import { getWorkspaceBranches } from "@/actions/branch/get-branches-action";
 
 interface WorkspacePageProps {
     params: Promise<{
@@ -29,6 +30,8 @@ export default async function WorkspacePage({
     const workspaceId = (await params).workspaceId;
     const currentBranch = (await searchParams)?.branch || "main";
 
+    const workspaceBranches = await getWorkspaceBranches(workspaceId);
+
     if (!workspaceId) return <div> Workspace ID is missing </div>;
 
     return (
@@ -44,13 +47,14 @@ export default async function WorkspacePage({
                     <BranchDropdown
                         workspaceId={workspaceId}
                         currentBranch={currentBranch}
+                        workspaceBranches={workspaceBranches}
                     />
                     <History workspaceId={workspaceId} />
                     <CreateNewBranch workspaceId={workspaceId} />
                     <Merge workspaceId={workspaceId} />
-                    <DeleteBranch 
-                        workspaceId={workspaceId} 
-                        currentBranchId={currentBranch} 
+                    <DeleteBranch
+                        workspaceId={workspaceId}
+                        currentBranchId={currentBranch}
                     />
                 </div>
             </PageContainerHeader>

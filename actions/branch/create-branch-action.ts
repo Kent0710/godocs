@@ -22,6 +22,7 @@ export async function createBranchAction(
             name: data.name,
             workspaceId: workspaceId,
             ownerId: user.uid,
+            content : '',
         });
 
         revalidatePath(`/workspace/${workspaceId}`);

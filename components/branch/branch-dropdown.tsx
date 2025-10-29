@@ -9,20 +9,20 @@ import {
 import { Button } from "../ui/button";
 import { GitBranch, ChevronDown } from "lucide-react";
 
-import { getWorkspaceBranches } from "@/actions/branch/get-branches-action";
 import BranchDropdownItem from "./branch-dropdown-item";
+import { BranchType } from "@/lib/types";
 
 interface BranchDropdownProps {
     workspaceId: string;
     currentBranch?: string;
+    workspaceBranches: BranchType[];
 }
 
 export async function BranchDropdown({
     workspaceId,
     currentBranch,
+    workspaceBranches,
 }: BranchDropdownProps) {
-    const branches = await getWorkspaceBranches(workspaceId);
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -33,10 +33,10 @@ export async function BranchDropdown({
             <DropdownMenuContent>
                 <DropdownMenuLabel>Switch branches</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                {branches.length === 0 ? (
+                {workspaceBranches.length === 0 ? (
                     <DropdownMenuItem>No branches found</DropdownMenuItem>
                 ) : (
-                    branches.map((branch) => (
+                    workspaceBranches.map((branch) => (
                         <BranchDropdownItem
                             key={branch.id}
                             branch={branch}

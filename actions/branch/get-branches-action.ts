@@ -5,7 +5,14 @@
 import { branchConverter } from "@/lib/firebase/converters";
 import { db } from "@/lib/firebase/firebase";
 import { BranchType } from "@/lib/types";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+    collection,
+    doc,
+    getDoc,
+    getDocs,
+    query,
+    where,
+} from "firebase/firestore";
 
 export async function getWorkspaceBranches(
     workspaceId: string
@@ -27,5 +34,27 @@ export async function getWorkspaceBranches(
         throw new Error(
             "Failed to fetch branches: " + (error as Error).message
         );
+    }
+}
+
+export async function getBranchById(
+    branchId: string
+): Promise<BranchType | null> {
+    if (!branchId)
+        throw new Error("Branch ID is required to fetch the branch.");
+
+    try {
+        const docRef = doc(db, "branch", branchId).withConverter(
+            branchConverter
+        );
+        const snapshot = await getDoc(docRef);
+
+        if (!snapshot.exists()) {
+            return null;
+        }
+
+        return snapshot.data();
+    } catch (error) {
+        throw new Error("Failed to fetch branch: " + (error as Error).message);
     }
 }
