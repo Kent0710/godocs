@@ -9,6 +9,7 @@ import {
 import { Paragraph, Title } from "@/components/reusables/texts";
 import NewBranch from "@/components/branch/new-branch";
 import Merge from "@/components/merge/merge";
+import History from "@/components/history/history";
 
 interface WorkspacePageProps {
     params: Promise<{
@@ -42,6 +43,7 @@ export default async function WorkspacePage({
                         workspaceId={workspaceId}
                         currentBranch={currentBranch}
                     />
+                    <History workspaceId={workspaceId} />
                     <NewBranch workspaceId={workspaceId} />
                     <Merge workspaceId={workspaceId} />
                 </div>
