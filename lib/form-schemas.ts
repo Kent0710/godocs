@@ -12,3 +12,8 @@ export const createNewBranchFormSchema = z.object({
     option: z.enum(["independent", "dependent"]).default("dependent"),
     originBranch: z.string()
 });
+
+export const commitFormSchema = z.object({
+    title: z.string().min(5, "Commit title must be at least 1 characters."),
+    description: z.string().optional(),
+});

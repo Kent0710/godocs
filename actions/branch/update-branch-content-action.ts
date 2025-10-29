@@ -4,10 +4,14 @@ import { updateDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
 import { revalidatePath } from "next/cache";
 
-export async function updateBranchContentAction(workspaceId : string, branchId: string, content: string) {
+export async function updateBranchContentAction(
+    workspaceId: string,
+    branchId: string,
+    newContent: string
+) {
     try {
         const branchRef = doc(db, "branch", branchId);
-        await updateDoc(branchRef, { content });
+        await updateDoc(branchRef, { newContent: newContent});
 
         revalidatePath(`/workspace/${workspaceId}`);
 

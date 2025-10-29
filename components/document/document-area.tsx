@@ -7,11 +7,13 @@ import { BranchType } from "@/lib/types";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { toast } from "sonner";
+import CommitDialog from "../commit/commit-dialog";
 
 export default function DocumentArea() {
     const pathname = usePathname();
 
     const editableRef = useRef<HTMLDivElement>(null);
+    const [allowCommit, setAllowCommit] = useState(false);
     const [branchData, setBranchData] = useState<BranchType | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
@@ -39,6 +41,10 @@ export default function DocumentArea() {
                     return;
                 }
 
+                if (data.oldContent !== data.newContent) {
+                    setAllowCommit(true);
+                }
+
                 setBranchData(data);
             } catch (error) {
                 console.error("Error fetching branch:", error);
@@ -56,22 +62,32 @@ export default function DocumentArea() {
         if (
             branchData &&
             editableRef.current &&
-            editableRef.current.innerHTML !== branchData.content
+            editableRef.current.innerHTML !== branchData.newContent
         ) {
-            editableRef.current.innerHTML = branchData.content;
+            editableRef.current.innerHTML = branchData.newContent;
         }
     }, [branchData]);
 
     // Debounced save function
     const debouncedSave = useCallback(
-        async (content: string) => {
+        async (newContent: string) => {
             if (!branchId) return;
 
             try {
                 setIsSaving(true);
 
                 const workspaceId = pathname.split("/").pop();
-                await updateBranchContentAction(workspaceId!, branchId, content);
+                await updateBranchContentAction(
+                    workspaceId!,
+                    branchId,
+                    newContent,
+                );
+
+                if (branchData && branchData.oldContent !== newContent) {
+                    setAllowCommit(true);
+                } else {
+                    setAllowCommit(false);
+                }
 
                 setLastSaved(new Date());
                 toast.success("Document saved");
@@ -82,14 +98,14 @@ export default function DocumentArea() {
                 setIsSaving(false);
             }
         },
-        [branchId, pathname]
+        [branchData, branchId, pathname]
     );
 
     const handleInput = useCallback(() => {
-        const content = editableRef.current?.innerHTML ?? "";
+        const newContent = editableRef.current?.innerHTML ?? "";
 
         // Update local state immediately
-        setBranchData((prev) => (prev ? { ...prev, content } : prev));
+        setBranchData((prev) => (prev ? { ...prev, newContent } : prev));
 
         // Clear existing timeout
         if (saveTimeoutRef.current) {
@@ -98,7 +114,7 @@ export default function DocumentArea() {
 
         // Set new timeout to save after 2 seconds of inactivity
         saveTimeoutRef.current = setTimeout(() => {
-            debouncedSave(content);
+            debouncedSave(newContent);
         }, 2000);
     }, [debouncedSave]);
 
@@ -130,17 +146,25 @@ export default function DocumentArea() {
     return (
         <div className="relative">
             {/* Save indicator */}
-            <div className="absolute top-2 right-2 text-sm text-muted-foreground">
+            <div className="absolute top-2 right-2 ">
+                <div>
+                    {allowCommit && (
+                        <CommitDialog />
+                    )}
+                </div>
+
                 {isSaving ? (
                     <span className="flex items-center gap-2">
                         <span className="inline-block w-2 h-2 bg-yellow-500 rounded-full animate-pulse" />
                         Saving...
                     </span>
                 ) : lastSaved ? (
-                    <span className="flex items-center gap-2">
-                        <span className="inline-block w-2 h-2 bg-green-500 rounded-full" />
-                        Saved {lastSaved.toLocaleTimeString()}
-                    </span>
+                    <div>
+                        <span className="flex items-center gap-2 mt-4">
+                            <span className="inline-block w-2 h-2 bg-green-500 rounded-full" />
+                            Saved {lastSaved.toLocaleTimeString()}
+                        </span>
+                    </div>
                 ) : null}
             </div>
             <div

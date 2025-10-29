@@ -4,15 +4,24 @@ export interface WorkspaceType {
     name: string;
     description?: string;
     createdAt: Date;
-    ownerId: string; 
-    mainBranchId : string;
+    ownerId: string;
+    mainBranchId: string;
 }
 
 export interface BranchType {
     id: string; // Firestore doc ID
     name: string;
     workspaceId: string;
-    ownerId : string;
-    content : string;
+    ownerId: string;
+    oldContent: string;
+    newContent : string;
 }
 
+export interface CommitType {
+    id: string; // Firestore doc ID
+    branchId: string;
+    title: string;
+    description: string;
+    ownerId: string;
+    content : string;
+}

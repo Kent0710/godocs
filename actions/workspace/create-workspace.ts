@@ -22,7 +22,6 @@ export async function createWorkspace(
             description: data.description || "",
             createdAt: new Date(),
             ownerId: user.uid,
-            content :"",
         });
 
         // create the main branch for the workspace
@@ -30,8 +29,9 @@ export async function createWorkspace(
         const defaultBranch = await addDoc(collection(db, "branch"), {
             name: "main",
             workspaceId: newWorkspace.id,
-            ownerId : user.uid,
-            content : "",
+            ownerId: user.uid,
+            oldContent: "",
+            newContent: "",
         });
 
         revalidatePath("/home");

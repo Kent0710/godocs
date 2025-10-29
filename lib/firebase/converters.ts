@@ -5,7 +5,7 @@ import {
     SnapshotOptions,
     WithFieldValue,
 } from "firebase/firestore";
-import { BranchType, WorkspaceType } from "@/lib/types";
+import { BranchType, CommitType, WorkspaceType } from "@/lib/types";
 
 export const workspaceConverter: FirestoreDataConverter<WorkspaceType> = {
     toFirestore(
@@ -16,6 +16,7 @@ export const workspaceConverter: FirestoreDataConverter<WorkspaceType> = {
             description: workspace.description ?? "",
             createdAt: workspace.createdAt,
             ownerId: workspace.ownerId,
+            mainBranchId: workspace.mainBranchId,
         };
     },
 
@@ -32,19 +33,19 @@ export const workspaceConverter: FirestoreDataConverter<WorkspaceType> = {
                 ? data.createdAt.toDate()
                 : data.createdAt,
             ownerId: data.ownerId,
+            mainBranchId: data.mainBranchId,
         };
     },
 };
 
 export const branchConverter: FirestoreDataConverter<BranchType> = {
-    toFirestore(
-        branch: WithFieldValue<Omit<BranchType, "id">>
-    ): DocumentData {
+    toFirestore(branch: WithFieldValue<Omit<BranchType, "id">>): DocumentData {
         return {
             name: branch.name,
             workspaceId: branch.workspaceId,
-            ownerId : branch.ownerId,
-            content : branch.content,
+            ownerId: branch.ownerId,
+            oldContent: branch.oldContent,
+            newContent: branch.newContent,
         };
     },
 
@@ -57,8 +58,35 @@ export const branchConverter: FirestoreDataConverter<BranchType> = {
             id: snapshot.id,
             name: data.name,
             workspaceId: data.workspaceId,
-            ownerId : data.ownerId,
+            ownerId: data.ownerId,
+            oldContent: data.oldContent,
+            newContent: data.newContent,
+        };
+    },
+};
+
+export const commitConverter: FirestoreDataConverter<CommitType> = {
+    toFirestore(commit: WithFieldValue<Omit<CommitType, "id">>): DocumentData {
+        return {
+            branchId: commit.branchId,
+            title: commit.title,
+            description: commit.description,
+            ownerId: commit.ownerId,
+            content : commit.content,
+        };
+    },
+    fromFirestore(
+        snapshot: QueryDocumentSnapshot,
+        options?: SnapshotOptions
+    ): CommitType {
+        const data = snapshot.data(options)!;
+        return {
+            id: snapshot.id,
+            branchId: data.branchId,
+            title: data.title,
+            description: data.description,
+            ownerId: data.ownerId,
             content : data.content,
         };
-    }
+    },
 };

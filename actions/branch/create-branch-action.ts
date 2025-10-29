@@ -20,7 +20,9 @@ export async function createBranchAction(
         }
 
         // get the origin branch content from data.originBranch
-        const originBranch = doc(db, "branch", data.originBranch).withConverter(branchConverter);
+        const originBranch = doc(db, "branch", data.originBranch).withConverter(
+            branchConverter
+        );
         const originBranchSnap = await getDoc(originBranch);
 
         if (!originBranchSnap.exists()) {
@@ -31,7 +33,8 @@ export async function createBranchAction(
             name: data.name,
             workspaceId: workspaceId,
             ownerId: user.uid,
-            content : originBranchSnap.data().content,
+            oldContent: originBranchSnap.data().oldContent,
+            newContent: "",
             originBranch: data.originBranch,
         });
 

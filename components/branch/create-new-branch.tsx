@@ -85,9 +85,7 @@ function NewBranchForm({ workspaceId, workspaceBranches }: CreateNewBranchProps)
             return;
         }
 
-        toast.loading("Creating branch...");
         const result = await createBranchAction(workspaceId, data);
-        toast.dismiss();
 
         if (result.success) {
             toast.success("Branch created successfully!");
