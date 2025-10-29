@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { Button } from "./ui/button";
@@ -13,11 +13,15 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
+import { signOut } from "@/actions/auth";
+
 interface HeaderProps {
     className?: string;
 }
 
 export default function Header({ className }: HeaderProps) {
+    const router = useRouter();
+
     const pathname = usePathname();
     const navs = useMemo(
         () => [{ label: "Home", href: "/home", active: pathname === "/home" }],
@@ -56,8 +60,13 @@ export default function Header({ className }: HeaderProps) {
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                        <Button variant={"ghost"}>
-                            <LogOut /> Log out
+                        <Button variant={"ghost"}
+                            onClick={async () => {
+                                await signOut();
+                                router.push("/signUp");
+                            }}
+                        >
+                            <LogOut /> Sign Out
                         </Button>
                     </DropdownMenuContent>
                 </DropdownMenu>
