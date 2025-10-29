@@ -4,8 +4,14 @@ import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { twMerge } from "tailwind-merge";
 import { Button } from "./ui/button";
-import { User } from "lucide-react";
+import { LogOut, User } from "lucide-react";
 import Link from "next/link";
+
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface HeaderProps {
     className?: string;
@@ -43,9 +49,18 @@ export default function Header({ className }: HeaderProps) {
 
             {/* right section  */}
             <section>
-                <Button variant={"outline"}>
-                    <User /> John Doe
-                </Button>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant={"outline"}>
+                            <User /> John Doe
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <Button variant={"ghost"}>
+                            <LogOut /> Log out
+                        </Button>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </section>
         </header>
     );
