@@ -3,9 +3,10 @@
 import { createNewBranchFormSchema } from "@/lib/form-schemas";
 import { z } from "zod";
 import { getUserFromSession } from "../auth";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, getDoc, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
 import { revalidatePath } from "next/cache";
+import { branchConverter } from "@/lib/firebase/converters";
 
 export async function createBranchAction(
     workspaceId: string,
@@ -18,11 +19,20 @@ export async function createBranchAction(
             throw new Error("User not authenticated.");
         }
 
+        // get the origin branch content from data.originBranch
+        const originBranch = doc(db, "branch", data.originBranch).withConverter(branchConverter);
+        const originBranchSnap = await getDoc(originBranch);
+
+        if (!originBranchSnap.exists()) {
+            throw new Error("Origin branch does not exist.");
+        }
+
         const newBranch = await addDoc(collection(db, "branch"), {
             name: data.name,
             workspaceId: workspaceId,
             ownerId: user.uid,
-            content : '',
+            content : originBranchSnap.data().content,
+            originBranch: data.originBranch,
         });
 
         revalidatePath(`/workspace/${workspaceId}`);

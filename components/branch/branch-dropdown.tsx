@@ -1,3 +1,4 @@
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -18,7 +19,7 @@ interface BranchDropdownProps {
     workspaceBranches: BranchType[];
 }
 
-export async function BranchDropdown({
+export function BranchDropdown({
     workspaceId,
     currentBranch,
     workspaceBranches,

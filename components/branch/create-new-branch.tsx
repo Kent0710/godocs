@@ -36,12 +36,14 @@ import { useRouter } from "next/navigation";
 import { createNewBranchFormSchema } from "@/lib/form-schemas";
 import { toast } from "sonner";
 import { createBranchAction } from "@/actions/branch/create-branch-action";
+import { BranchType } from "@/lib/types";
 
 interface CreateNewBranchProps {
     workspaceId?: string;
+    workspaceBranches: BranchType[];
 }
 
-export default function CreateNewBranch({ workspaceId }: CreateNewBranchProps) {
+export default function CreateNewBranch({ workspaceId, workspaceBranches }: CreateNewBranchProps) {
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -57,13 +59,13 @@ export default function CreateNewBranch({ workspaceId }: CreateNewBranchProps) {
                         Configure your new branch
                     </DialogDescription>
                 </DialogHeader>
-                <NewBranchForm workspaceId={workspaceId} />
+                <NewBranchForm workspaceId={workspaceId} workspaceBranches={workspaceBranches} />
             </DialogContent>
         </Dialog>
     );
 }
 
-function NewBranchForm({ workspaceId }: CreateNewBranchProps) {
+function NewBranchForm({ workspaceId, workspaceBranches }: CreateNewBranchProps) {
     const router = useRouter();
 
     const form = useForm({
@@ -71,6 +73,7 @@ function NewBranchForm({ workspaceId }: CreateNewBranchProps) {
         defaultValues: {
             name: "",
             option: "dependent",
+            originBranch: workspaceBranches.find((branch) => branch.name === "main")?.id || "",
         },
     });
 
@@ -88,7 +91,7 @@ function NewBranchForm({ workspaceId }: CreateNewBranchProps) {
 
         if (result.success) {
             toast.success("Branch created successfully!");
-            router.push(`/workspace/${workspaceId}?branch=${data.name}`);
+            router.push(`/workspace/${workspaceId}?branch=${result.branchId}`);
         } else {
             toast.error(`Failed to create branch.`);
         }
@@ -139,6 +142,33 @@ function NewBranchForm({ workspaceId }: CreateNewBranchProps) {
                                     ? "Configure dependent requirements after branch creation."
                                     : "Independent branches have no dependencies."}
                             </FormDescription>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="originBranch"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Origin Branch</FormLabel>
+                            <FormControl>
+                                <Select
+                                    onValueChange={field.onChange}
+                                    defaultValue={field.value}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Select origin branch" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {workspaceBranches.map((branch) => (
+                                            <SelectItem key={branch.id} value={branch.id}>
+                                                {branch.name}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </FormControl>
                             <FormMessage />
                         </FormItem>
                     )}

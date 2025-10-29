@@ -50,7 +50,9 @@ export default async function WorkspacePage({
                         workspaceBranches={workspaceBranches}
                     />
                     <History workspaceId={workspaceId} />
-                    <CreateNewBranch workspaceId={workspaceId} />
+                    <CreateNewBranch workspaceId={workspaceId} 
+                    workspaceBranches={workspaceBranches}
+                    />
                     <Merge workspaceId={workspaceId} />
                     <DeleteBranch
                         workspaceId={workspaceId}
