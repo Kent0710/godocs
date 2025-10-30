@@ -6,11 +6,11 @@ import {
 } from "@/components/reusables/containers";
 import { Paragraph, Title } from "@/components/reusables/texts";
 
-interface HistoryPageProps {
+interface BranchHistoryPageProps {
     params: Promise<{ branchId: string }>;
 }
 
-export default async function HistoryPage({ params }: HistoryPageProps) {
+export default async function BranchHistoryPage({ params }: BranchHistoryPageProps) {
     const branchId = (await params).branchId;
 
     if (!branchId) return <div> Branch ID is missing </div>;

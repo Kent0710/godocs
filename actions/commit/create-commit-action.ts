@@ -11,7 +11,8 @@ export async function createCommitAction(
     workspaceId: string,
     branchId: string,
     data: z.infer<typeof createCommitFormSchema>,
-    content: string
+    content: string,
+    oldContent: string
 ) {
     if (!branchId) {
         throw new Error("Branch ID is required to create a commit.");
@@ -31,6 +32,7 @@ export async function createCommitAction(
             description: data.description,
             ownerId: user.uid,
             username: user.name,
+            oldContent: oldContent,
             content: content,
             createdAt: new Date(),
         });

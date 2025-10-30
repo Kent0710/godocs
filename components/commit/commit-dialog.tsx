@@ -102,7 +102,8 @@ function CommitForm({
             workspaceId,
             branchId,
             data,
-            newContent
+            newContent,
+            oldContent,
         );
 
         if (result.success) {

@@ -1,7 +1,8 @@
 import { CommitType } from "@/lib/types";
 import { Button } from "../ui/button";
-import { FileClock, Undo } from "lucide-react";
+import { FileClock } from "lucide-react";
 import Link from "next/link";
+import { RevertToCommitButton } from "../commit/revert-to-commit-button";
 
 interface BranchHistoryItemProps {
     // Every item is just a commit item
@@ -25,9 +26,10 @@ export function BranchHistoryItem({ commit }: BranchHistoryItemProps) {
 
             {/* right section */}
             <section className="flex items-center gap-2">
-                <Button variant={"outline"}>
-                    <Undo /> Revert Version
-                </Button>
+                <RevertToCommitButton 
+                    branchId={commit.branchId} 
+                    content={commit.content}
+                />
                 <Link href={`/commit/${commit.id}`}>
                     <Button variant={"outline"}>
                         <FileClock />

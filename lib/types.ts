@@ -24,6 +24,7 @@ export interface CommitType {
     title: string;
     description: string;
     ownerId: string;
+    oldContent : string;
     content : string;
     createdAt: string;
 }

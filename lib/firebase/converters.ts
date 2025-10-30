@@ -79,6 +79,7 @@ export const commitConverter: FirestoreDataConverter<CommitType> = {
             title: commit.title,
             description: commit.description,
             ownerId: commit.ownerId,
+            oldContent: commit.oldContent,
             content: commit.content,
             createdAt: commit.createdAt,
         };
@@ -94,6 +95,7 @@ export const commitConverter: FirestoreDataConverter<CommitType> = {
             title: data.title,
             description: data.description,
             ownerId: data.ownerId,
+            oldContent: data.oldContent,
             content: data.content,
             createdAt: data.createdAt?.toDate
                 ? data.createdAt.toDate()
