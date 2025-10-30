@@ -24,7 +24,7 @@ export default function ProofreadDocumentButton({
                 </>
             ) : (
                 <>
-                    <Sparkles fill="white" /> Proofread Document
+                    <Sparkles fill="white" /> Proofread 
                 </>
             )}
         </Button>

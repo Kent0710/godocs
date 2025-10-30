@@ -150,3 +150,38 @@ declare const Rewriter: {
     }>;
 };
 
+// ===========================================================
+// WRITER API (Gemini Nano built-in Chrome API)
+// ===========================================================
+
+type WriterToneOption = "formal" | "neutral" | "casual";
+type WriterFormatOption = "markdown" | "plain-text";
+type WriterLengthOption = "short" | "medium" | "long";
+
+declare const Writer: {
+    availability(): Promise<"available" | "unavailable" | "downloadable">;
+
+    create(options?: {
+        tone?: WriterToneOption;
+        format?: WriterFormatOption;
+        length?: WriterLengthOption;
+        sharedContext?: string;
+        expectedInputLanguages?: string[];
+        expectedContextLanguages?: string[];
+        outputLanguage?: string;
+        signal?: AbortSignal;
+        monitor?: (monitor: EventTarget) => void;
+    }): Promise<{
+        write(
+            prompt: string,
+            options?: { context?: string; signal?: AbortSignal }    
+        ): Promise<string>;
+
+        writeStreaming?(
+            prompt: string,
+            options?: { context?: string; signal?: AbortSignal }
+        ): AsyncGenerator<string>;
+
+        destroy(): void;
+    }>;
+};

@@ -37,3 +37,10 @@ export const rewriteDocumentFormSchema = z.object({
     tone: z.enum(["more-formal", "as-is", "more-casual"]).default("as-is"),
     format: z.enum(["as-is", "markdown", "plain-text"]).default("as-is"),
 })
+
+export const writeDocumentFormSchema = z.object({
+    writingPrompt: z.string().min(1, "Writing prompt must be at least 1 character."),
+    tone: z.enum(["formal", "neutral", "casual"]).default("neutral"),
+    format: z.enum(["markdown", "plain-text"]).default("plain-text"),
+    length: z.enum(["short", "medium", "long"]).default("medium"),
+})

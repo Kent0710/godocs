@@ -14,6 +14,7 @@ import CommitDialog from "../commit/commit-dialog";
 import ProofreadDocumentButton from "./proofread-document-button";
 import GeminiNanoNotAvailable from "./gemini-nano-not-available";
 import RewriteDocumentButton from "./rewrite-document-button";
+import { WriteDocumentButton } from "./write-document-button";
 
 export default function DocumentArea() {
     const pathname = usePathname();
@@ -274,6 +275,68 @@ export default function DocumentArea() {
         setIsRewriting(false);
     };
 
+    // ===========================================================
+    // WRITER API (Gemini Nano built-in Chrome API)
+    // ===========================================================
+    const [isWriting, setIsWriting] = useState(false);
+    const handleWrite = async (
+        tone: WriterToneOption,
+        format: WriterFormatOption,
+        writePrompt: string,
+        length: WriterLengthOption,
+    ) => {
+        setIsWriting(true);
+
+        // Check if the Write API (Gemini Nano) is available
+        if (!("Writer" in self)) {
+            toast.warning("Write API not available.");
+            return;
+        }
+
+        // plug in the writer token
+        const otMeta = document.createElement("meta");
+        otMeta.httpEquiv = "origin-trial";
+        otMeta.content = process.env.NEXT_PUBLIC_WRITER_ORIGIN_TRIAL_TOKEN!;
+        document.head.append(otMeta);
+
+        if (otMeta.content === "") {
+            toast.error("Writer origin trial token is missing.");
+            return;
+        };
+
+        const availability = await Writer.availability();
+        if (availability === "unavailable") {
+            toast.error(
+                "Writer Gemini Nano model not available on this device."
+            );
+            return;
+        };
+
+        toast.dismiss();
+        toast.message("Writing document using Gemini Nano...");
+
+        const writer = await Writer.create({
+            tone: tone,
+            format: format,
+            outputLanguage: "en",
+            length: length,
+        });
+
+        const result = await writer.write(writePrompt);
+
+        if (editableRef.current) {
+            editableRef.current.innerText = result;
+            handleInput(); // Trigger save
+        } else {
+            toast.error("No content area to write into.");
+            return;
+        }
+
+        toast.success("Document written successfully!");
+
+        setIsWriting(false);
+    }
+
     if (isLoading) {
         return (
             <div className="w-[794px] h-[1123px] border mx-auto p-8 flex items-center justify-center">
@@ -307,7 +370,10 @@ export default function DocumentArea() {
                         onRewrite={handleRewrite}
                         isRewriting={isRewriting}
                     />
-
+                    <WriteDocumentButton
+                        onWrite={handleWrite}
+                        isWriting={isWriting}
+                    />
                     {allowCommit && (
                         <CommitDialog
                             branchId={branchData.id}

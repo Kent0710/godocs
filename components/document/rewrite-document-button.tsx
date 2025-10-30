@@ -60,7 +60,7 @@ export default function RewriteDocumentButton({
                         </>
                     ) : (
                         <>
-                            <Sparkles fill="white" /> Rewrite Document
+                            <Sparkles fill="white" /> Rewrite
                         </>
                     )}
                 </Button>
