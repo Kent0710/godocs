@@ -36,6 +36,7 @@ export async function createBranchAction(
             oldContent: originBranchSnap.data().oldContent,
             newContent: originBranchSnap.data().oldContent,
             originBranch: data.originBranch,
+            isCommitted: false,
         });
 
         revalidatePath(`/workspace/${workspaceId}`);

@@ -15,6 +15,7 @@ export interface BranchType {
     ownerId: string;
     oldContent: string;
     newContent : string;
+    isCommitted: boolean;
 }
 
 export interface CommitType {

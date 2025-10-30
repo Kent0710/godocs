@@ -13,7 +13,10 @@ export async function updateBranchContentAction(
 ) {
     try {
         const branchRef = doc(db, "branch", branchId);
-        await updateDoc(branchRef, { newContent: newContent });
+        await updateDoc(branchRef, {
+            newContent: newContent,
+            isCommitted: false,
+        });
 
         revalidatePath(`/workspace/${workspaceId}`);
 

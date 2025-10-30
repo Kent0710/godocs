@@ -2,7 +2,7 @@
 
 import { createCommitFormSchema } from "@/lib/form-schemas"
 import { getUserFromSession } from "../auth";
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, updateDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
@@ -33,6 +33,11 @@ export async function createCommitAction(
             ownerId : user.uid,
             content : content,
         })
+
+        const branchRef = doc(db, "branch", branchId);
+        await updateDoc(branchRef, {
+            isCommitted: true,
+        });
 
         revalidatePath(`/workspace/${workspaceId}`);
 

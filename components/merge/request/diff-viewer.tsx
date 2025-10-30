@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { DiffLine } from "@/components/merge/request/diff-line";
 
 export interface DocumentVersion {
-    title: string;
+    title?: string;
     lines: string[];
     branch?: string;
 }

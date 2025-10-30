@@ -5,7 +5,7 @@ import {
     SnapshotOptions,
     WithFieldValue,
 } from "firebase/firestore";
-import { BranchType, CommitType, WorkspaceType } from "@/lib/types";
+import { BranchType, CommitType, MergeRequestType, WorkspaceType } from "@/lib/types";
 
 export const workspaceConverter: FirestoreDataConverter<WorkspaceType> = {
     toFirestore(
@@ -46,6 +46,7 @@ export const branchConverter: FirestoreDataConverter<BranchType> = {
             ownerId: branch.ownerId,
             oldContent: branch.oldContent,
             newContent: branch.newContent,
+            isCommitted: branch.isCommitted || false,
         };
     },
 
@@ -61,6 +62,7 @@ export const branchConverter: FirestoreDataConverter<BranchType> = {
             ownerId: data.ownerId,
             oldContent: data.oldContent,
             newContent: data.newContent,
+            isCommitted: data.isCommitted || false,
         };
     },
 };
