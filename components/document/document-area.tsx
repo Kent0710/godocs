@@ -1,8 +1,11 @@
 "use client";
 
 import { getBranchById } from "@/actions/branch/get-branches-action";
-import { updateBranchContentAction } from "@/actions/branch/update-branch-content-action";
-// import { updateBranchContent } from "@/actions/branch/update-branch-action"; // Your save action
+import {
+    updateBranchContentAction,
+    updateBranchAfterCommit,
+} from "@/actions/branch/update-branch-content-action";
+
 import { BranchType } from "@/lib/types";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
@@ -80,7 +83,7 @@ export default function DocumentArea() {
                 await updateBranchContentAction(
                     workspaceId!,
                     branchId,
-                    newContent,
+                    newContent
                 );
 
                 if (branchData && branchData.oldContent !== newContent) {
@@ -127,6 +130,19 @@ export default function DocumentArea() {
         };
     }, []);
 
+    const onCommitSuccess = async () => {
+        setAllowCommit(false);
+        if (branchData) {
+            const workspaceId = pathname.split("/").pop();
+            const updatedBranch = await updateBranchAfterCommit(
+                workspaceId!,
+                branchData.id,
+                branchData.newContent
+            );
+            setBranchData(updatedBranch);
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="w-[794px] h-[1123px] border mx-auto p-8 flex items-center justify-center">
@@ -149,7 +165,11 @@ export default function DocumentArea() {
             <div className="absolute top-2 right-2 ">
                 <div>
                     {allowCommit && (
-                        <CommitDialog />
+                        <CommitDialog
+                            branchId={branchData.id}
+                            newContent={branchData.newContent}
+                            onCommitSuccess={onCommitSuccess}
+                        />
                     )}
                 </div>
 

@@ -34,7 +34,7 @@ export async function createBranchAction(
             workspaceId: workspaceId,
             ownerId: user.uid,
             oldContent: originBranchSnap.data().oldContent,
-            newContent: "",
+            newContent: originBranchSnap.data().oldContent,
             originBranch: data.originBranch,
         });
 

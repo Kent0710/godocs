@@ -23,13 +23,24 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { commitFormSchema } from "@/lib/form-schemas";
+import { createCommitFormSchema } from "@/lib/form-schemas";
 
 import { GitCommitHorizontal } from "lucide-react";
+import { createCommitAction } from "@/actions/commit/create-commit-action";
+import { usePathname } from "next/navigation";
+import { toast } from "sonner";
 
-interface CommitDialogProps {}
+interface CommitDialogProps {
+    branchId: string;
+    newContent: string; // the newContent
+    onCommitSuccess: () => void;
+}
 
-export default function CommitDialog({}: CommitDialogProps) {
+export default function CommitDialog({
+    branchId,
+    newContent,
+    onCommitSuccess,
+}: CommitDialogProps) {
     return (
         <Dialog>
             <DialogTrigger asChild>
@@ -44,7 +55,11 @@ export default function CommitDialog({}: CommitDialogProps) {
                         Provide a title and description for your commit.
                     </DialogDescription>
                 </DialogHeader>
-                <CommitForm />
+                <CommitForm
+                    branchId={branchId}
+                    newContent={newContent}
+                    onCommitSuccess={onCommitSuccess}
+                />
             </DialogContent>
         </Dialog>
     );
@@ -52,17 +67,47 @@ export default function CommitDialog({}: CommitDialogProps) {
 
 // THE ACTUAL FORM
 
-function CommitForm({}: CommitDialogProps) {
+function CommitForm({
+    branchId,
+    newContent,
+    onCommitSuccess,
+}: CommitDialogProps) {
+    const pathname = usePathname();
+
     const form = useForm({
-        resolver: zodResolver(commitFormSchema),
+        resolver: zodResolver(createCommitFormSchema),
         defaultValues: {
             title: "",
             description: "",
         },
     });
 
-    const onSubmit = async (data: z.infer<typeof commitFormSchema>) => {
-        // Handle commit submission logic here
+    const onSubmit = async (data: z.infer<typeof createCommitFormSchema>) => {
+        const workspaceId = pathname.split("/")[2];
+
+        if (!branchId) {
+            throw new Error("Branch ID is required to create a commit.");
+        }
+
+        if (!workspaceId) {
+            throw new Error("Workspace ID is required to create a commit.");
+        }
+
+        const result = await createCommitAction(
+            workspaceId,
+            branchId,
+            data,
+            newContent
+        );
+
+        if (result.success) {
+            onCommitSuccess();
+            
+            toast.success("Commit created successfully!");
+            form.reset();
+        } else {
+            toast.error("Failed to create commit.");
+        }
     };
 
     return (
