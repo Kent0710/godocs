@@ -25,3 +25,12 @@ export interface CommitType {
     ownerId: string;
     content : string;
 }
+
+export interface MergeRequestType {
+    id: string; // Firestore doc ID
+    title: string;
+    description: string;
+    ownerId : string;
+    originBranchId : string;
+    targetBranchId : string;
+}

@@ -2,11 +2,11 @@ import { MergeIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 
-interface MergeProps {
+interface MergeButtonNavProps {
     workspaceId?: string;
 }
 
-export default async function Merge({workspaceId}: MergeProps) {
+export default async function MergeButtonNav({workspaceId}: MergeButtonNavProps) {
     return (
         <Link href={`/workspace/merge/${workspaceId}`}>
             <Button variant={"outline"}>

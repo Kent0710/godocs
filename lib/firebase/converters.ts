@@ -90,3 +90,31 @@ export const commitConverter: FirestoreDataConverter<CommitType> = {
         };
     },
 };
+
+export const mergeRequestConverter: FirestoreDataConverter<MergeRequestType> = {
+    toFirestore(
+        mergeRequest: WithFieldValue<Omit<MergeRequestType, "id">>
+    ): DocumentData {
+        return {
+            title: mergeRequest.title,
+            description: mergeRequest.description,
+            ownerId : mergeRequest.ownerId,
+            originBranchId : mergeRequest.originBranchId,
+            targetBranchId : mergeRequest.targetBranchId,
+        };
+    },
+    fromFirestore(
+        snapshot: QueryDocumentSnapshot,
+        options?: SnapshotOptions
+    ): MergeRequestType {
+        const data = snapshot.data(options)!;
+        return {
+            id: snapshot.id,
+            title: data.title,
+            description: data.description,
+            ownerId : data.ownerId,
+            originBranchId : data.originBranchId,
+            targetBranchId : data.targetBranchId,
+        };
+    },
+};

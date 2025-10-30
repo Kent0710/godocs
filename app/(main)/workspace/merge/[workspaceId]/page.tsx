@@ -1,9 +1,12 @@
+import { getMergeRequests } from "@/actions/merge/get-merge-request-action";
+import CreateMergeRequestDialog from "@/components/merge/request/create-merge-request-dialog";
 import {
     PageContainer,
     PageContainerHeader,
     PageContainerMain,
 } from "@/components/reusables/containers";
 import { Title, Paragraph } from "@/components/reusables/texts";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FilePenLine, Merge, X } from "lucide-react";
 import Link from "next/link";
@@ -19,26 +22,7 @@ export default async function MergePage({ params }: MergePageProps) {
 
     if (!workspaceId) return <div> Workspace ID is missing </div>;
 
-    const sampleMergeRequests = [
-        {
-            id: "mr1",
-            title: "Fix typo in document",
-            author: "Alice",
-            date: "2024-06-01",
-        },
-        {
-            id: "mr2",
-            title: "Update section on project scope",
-            author: "Bob",
-            date: "2024-06-02",
-        },
-        {
-            id: "mr3",
-            title: "Add new appendix",
-            author: "Charlie",
-            date: "2024-06-03",
-        },
-    ];
+    const mergeRequests = await getMergeRequests(workspaceId);
 
     return (
         <PageContainer>
@@ -50,10 +34,13 @@ export default async function MergePage({ params }: MergePageProps) {
                         workspace.
                     </Paragraph>
                 </div>
+                <div>
+                    <CreateMergeRequestDialog />
+                </div>
             </PageContainerHeader>
             <PageContainerMain>
                 <ul className="flex flex-col gap-6">
-                    {sampleMergeRequests.map((mr) => (
+                    {mergeRequests.map((mr) => (
                         <li key={mr.id}>
                             <Link
                                 className="flex items-center justify-between"
@@ -67,7 +54,7 @@ export default async function MergePage({ params }: MergePageProps) {
                                             {mr.title}
                                         </p>
                                         <p className="text-muted-foreground">
-                                            Opened on {mr.date} by {mr.author}
+                                            Opened no by no author
                                         </p>
                                     </div>
                                 </div>

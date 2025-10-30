@@ -8,7 +8,7 @@ import {
 } from "@/components/reusables/containers";
 import { Title } from "@/components/reusables/texts";
 import CreateNewBranch from "@/components/branch/create-new-branch";
-import Merge from "@/components/merge/merge";
+import MergeButtonNav from "@/components/merge/merge-button-nav";
 import History from "@/components/history/history";
 import DeleteWorkspace from "@/components/workspace/delete-workspace";
 import { DeleteBranch } from "@/components/branch/delete-branch";
@@ -53,7 +53,7 @@ export default async function WorkspacePage({
                     <CreateNewBranch workspaceId={workspaceId} 
                     workspaceBranches={workspaceBranches}
                     />
-                    <Merge workspaceId={workspaceId} />
+                    <MergeButtonNav workspaceId={workspaceId} />
                     <DeleteBranch
                         workspaceId={workspaceId}
                         currentBranchId={currentBranch}

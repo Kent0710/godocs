@@ -1,3 +1,5 @@
+'use server'
+
 /*
     THIS SERVER ACTION IS FOR GETTING A BRANCH OR BRANCHES
 */
