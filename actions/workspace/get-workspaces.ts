@@ -4,7 +4,7 @@
     THIS SERVER ACTION IS FOR GETTING A WORKSPACE OR WORKSPACES
 */
 
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, getDoc, where, doc } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
 import { branchConverter, workspaceConverter } from "@/lib/firebase/converters";
 import { WorkspaceType } from "@/lib/types";
@@ -64,4 +64,23 @@ export async function getWorkspace(): Promise<WorkspaceType | null> {
         return null;
     }
     return snapshot.docs[0].data();
+}
+
+export async function getWorkspaceCode(workspaceId : string) {
+    if (!workspaceId) throw new Error("Workspace ID is required.");
+
+    try {
+
+        const workspaceRef = doc(db, "workspace", workspaceId).withConverter(workspaceConverter);
+        const snapshot = await getDoc(workspaceRef);
+
+        if (!snapshot.exists()) {
+            return "";
+        }
+
+        const workspaceData = snapshot.data();
+        return workspaceData.code;
+    } catch (error) {
+        throw new Error("Failed to get workspace code: " + (error as Error).message);
+    }
 }

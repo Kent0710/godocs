@@ -15,6 +15,7 @@ import { getWorkspaceBranches } from "@/actions/branch/get-branches-action";
 import { MergeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import WorkspaceCodeBlock from "@/components/workspace/workspace-code-block";
 
 interface WorkspacePageProps {
     params: Promise<{
@@ -68,6 +69,9 @@ export default async function WorkspacePage({
                     <DeleteBranch
                         workspaceId={workspaceId}
                         currentBranchId={currentBranch}
+                    />
+                    <WorkspaceCodeBlock 
+                        workspaceId={workspaceId}
                     />
                 </div>
             </PageContainerHeader>

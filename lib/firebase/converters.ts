@@ -22,6 +22,7 @@ export const workspaceConverter: FirestoreDataConverter<WorkspaceType> = {
             createdAt: workspace.createdAt,
             ownerId: workspace.ownerId,
             mainBranchId: workspace.mainBranchId,
+            code: workspace.code
         };
     },
 
@@ -39,6 +40,7 @@ export const workspaceConverter: FirestoreDataConverter<WorkspaceType> = {
                 : data.createdAt,
             ownerId: data.ownerId,
             mainBranchId: data.mainBranchId,
+            code: data.code
         };
     },
 };

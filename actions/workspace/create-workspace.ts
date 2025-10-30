@@ -6,6 +6,7 @@ import { z } from "zod";
 import { createNewWorkspaceFormSchema } from "@/lib/form-schemas";
 import { revalidatePath } from "next/cache";
 import { getUserFromSession } from "../auth";
+import { generateWorkspaceCode } from "@/lib/utils";
 
 export async function createWorkspace(
     data: z.infer<typeof createNewWorkspaceFormSchema>
@@ -22,6 +23,7 @@ export async function createWorkspace(
             description: data.description || "",
             createdAt: new Date(),
             ownerId: user.uid,
+            code: generateWorkspaceCode(),
         });
 
         // create the main branch for the workspace
