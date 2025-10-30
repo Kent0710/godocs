@@ -167,6 +167,7 @@ export default function DocumentArea() {
                     {allowCommit && (
                         <CommitDialog
                             branchId={branchData.id}
+                            oldContent={branchData.oldContent}
                             newContent={branchData.newContent}
                             onCommitSuccess={onCommitSuccess}
                         />

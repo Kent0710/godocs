@@ -25,19 +25,22 @@ import {
 import { Input } from "@/components/ui/input";
 import { createCommitFormSchema } from "@/lib/form-schemas";
 
-import { GitCommitHorizontal } from "lucide-react";
+import { GitCommitHorizontal,  Sparkles } from "lucide-react";
 import { createCommitAction } from "@/actions/commit/create-commit-action";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
+import { constructCommitLanguageModelPrompt } from "@/lib/prompts";
 
 interface CommitDialogProps {
     branchId: string;
+    oldContent: string;
     newContent: string; // the newContent
     onCommitSuccess: () => void;
 }
 
 export default function CommitDialog({
     branchId,
+    oldContent,
     newContent,
     onCommitSuccess,
 }: CommitDialogProps) {
@@ -57,6 +60,7 @@ export default function CommitDialog({
                 </DialogHeader>
                 <CommitForm
                     branchId={branchId}
+                    oldContent={oldContent}
                     newContent={newContent}
                     onCommitSuccess={onCommitSuccess}
                 />
@@ -69,6 +73,7 @@ export default function CommitDialog({
 
 function CommitForm({
     branchId,
+    oldContent,
     newContent,
     onCommitSuccess,
 }: CommitDialogProps) {
@@ -102,11 +107,84 @@ function CommitForm({
 
         if (result.success) {
             onCommitSuccess();
-            
+
             toast.success("Commit created successfully!");
             form.reset();
         } else {
             toast.error("Failed to create commit.");
+        }
+    };
+
+    const handleSummarize = async () => {
+        try {
+            toast.loading("Checking AI model availability...");
+
+            // Check if the Prompt API (Gemini Nano) is available
+            if (!("LanguageModel" in self)) {
+                toast.warning("Prompt API not available.");
+                return;
+            }
+
+            const availability = await LanguageModel.availability();
+            if (availability === "unavailable") {
+                toast.error("Gemini Nano model not available on this device.");
+                return;
+            }
+
+            toast.dismiss();
+            toast.message("Generating commit message using Gemini Nano...");
+
+            // Create a session with commit conditioning
+            const session = await LanguageModel.create({
+                expectedInputs: [{ type: "text", languages: ["en"] }],
+                expectedOutputs: [{ type: "text", languages: ["en"] }],
+                initialPrompts: [
+                    {
+                        role: "system",
+                        content: constructCommitLanguageModelPrompt(
+                            oldContent,
+                            newContent
+                        ),
+                    },
+                ],
+            });
+
+            // Use structured output with a JSON schema
+            const schema = {
+                type: "object",
+                properties: {
+                    title: { type: "string" },
+                    description: { type: "string" },
+                },
+                required: ["title", "description"],
+            };
+
+            const result = await session.prompt(
+                constructCommitLanguageModelPrompt(oldContent, newContent),
+                {
+                    responseConstraint: schema,
+                }
+            );
+
+            // Parse result
+            const parsed = JSON.parse(result);
+            const title = parsed.title?.trim() ?? "";
+            const description = parsed.description?.trim() ?? "";
+
+            // Basic validation fallback
+            if (!title || !description) {
+                toast.warning("AI output incomplete.");
+                return;
+            }
+
+            // Set form values
+            form.setValue("title", title);
+            form.setValue("description", description);
+
+            toast.success("AI-generated commit message created!");
+        } catch (err) {
+            console.error("Prompt API error:", err);
+            toast.error("Failed to use Gemini Nano Prompt API.");
         }
     };
 
@@ -145,7 +223,17 @@ function CommitForm({
                         </FormItem>
                     )}
                 />
-                <Button type="submit">Commit Changes</Button>
+                <div className="flex gap-2">
+                    <Button type="submit">Commit Changes</Button>
+                    <Button
+                        variant={"special"}
+                        onClick={handleSummarize}
+                        type="button"
+                    >
+                        <Sparkles fill="white" />
+                        Generate commit with AI
+                    </Button>
+                </div>
             </form>
         </Form>
     );
