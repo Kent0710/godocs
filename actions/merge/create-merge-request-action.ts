@@ -33,6 +33,8 @@ export async function createMergeRequestAction(
             targetBranchId: data.targetBranchId,
             workspaceId: workspaceId,
             ownerId: user.uid,
+            createdAt: new Date(),
+            status: 'open',
         });
 
         revalidatePath(`/workspace/merge/${workspaceId}`);

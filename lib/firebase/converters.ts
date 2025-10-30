@@ -114,6 +114,8 @@ export const mergeRequestConverter: FirestoreDataConverter<MergeRequestType> = {
             ownerId: mergeRequest.ownerId,
             originBranchId: mergeRequest.originBranchId,
             targetBranchId: mergeRequest.targetBranchId,
+            createdAt: mergeRequest.createdAt,
+            status: mergeRequest.status,
         };
     },
     fromFirestore(
@@ -128,6 +130,10 @@ export const mergeRequestConverter: FirestoreDataConverter<MergeRequestType> = {
             ownerId: data.ownerId,
             originBranchId: data.originBranchId,
             targetBranchId: data.targetBranchId,
+            createdAt: data.createdAt?.toDate
+                ? data.createdAt.toDate()
+                : data.createdAt,
+            status: data.status,
         };
     },
 };

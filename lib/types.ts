@@ -36,4 +36,6 @@ export interface MergeRequestType {
     ownerId : string;
     originBranchId : string;
     targetBranchId : string;
+    status : 'open' | 'closed' | 'merged';
+    createdAt : string;
 }

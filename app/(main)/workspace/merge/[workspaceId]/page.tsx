@@ -1,4 +1,5 @@
 import { getMergeRequests } from "@/actions/merge/get-merge-request-action";
+import CloseMergeButton from "@/components/merge/close-merge-button";
 import CreateMergeRequestDialog from "@/components/merge/request/create-merge-request-dialog";
 import {
     PageContainer,
@@ -8,8 +9,8 @@ import {
 import { Title, Paragraph } from "@/components/reusables/texts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { FilePenLine, Merge, X } from "lucide-react";
-import Link from "next/link";
+import { formatDate } from "@/lib/utils";
+import { Merge} from "lucide-react";
 
 interface MergePageProps {
     params: Promise<{
@@ -41,39 +42,37 @@ export default async function MergePage({ params }: MergePageProps) {
             <PageContainerMain>
                 <ul className="flex flex-col gap-6">
                     {mergeRequests.map((mr) => (
-                        <li key={mr.id}>
-                            <Link
-                                className="flex items-center justify-between"
-                                href={`/workspace/merge/request/${mr.id}`}
-                            >
-                                {/* left section  */}
-                                <div className="flex items-center gap-4">
-                                    <p>#{mr.id}</p>
-                                    <div>
-                                        <p className="font-semibold">
-                                            {mr.title}
-                                        </p>
-                                        <p className="text-muted-foreground">
-                                            Opened no by no author
-                                        </p>
-                                    </div>
+                        <li
+                            key={mr.id}
+                            className="flex items-center justify-between"
+                        >
+                            {/* left section  */}
+                            <div className="flex items-center gap-4">
+                                <p>#{mr.id}</p>
+                                <div>
+                                    <Badge variant={"outline"} className="mb-2">
+                                        {formatDate(mr.createdAt)}
+                                    </Badge>
+                                    <p className="font-semibold">{mr.title}</p>
+                                    <p className="text-muted-foreground">
+                                        Opened no by no author
+                                    </p>
                                 </div>
-                                {/* right section  */}
-                                <div className="flex gap-2">
-                                    <Button variant={"outline"}>
-                                        <X />
-                                        Close
-                                    </Button>
-                                    <Button variant={"outline"}>
-                                        <FilePenLine />
-                                        Comment
-                                    </Button>
+                            </div>
+                            {/* right section  */}
+                            <div className="flex gap-2">
+                                <CloseMergeButton
+                                    mergeId={mr.id}
+                                    workspaceId={workspaceId}
+                                />
+
+                                {mr.status === "open" && (
                                     <Button variant={"outline"}>
                                         <Merge />
                                         Merge
                                     </Button>
-                                </div>
-                            </Link>
+                                )}
+                            </div>
                         </li>
                     ))}
                 </ul>
