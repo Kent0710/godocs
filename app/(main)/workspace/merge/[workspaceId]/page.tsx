@@ -11,7 +11,8 @@ import { Title, Paragraph } from "@/components/reusables/texts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
-import { Merge } from "lucide-react";
+import { Merge, Pen } from "lucide-react";
+import Link from "next/link";
 
 interface MergePageProps {
     params: Promise<{
@@ -80,6 +81,15 @@ export default async function MergePage({ params }: MergePageProps) {
                                         Merge
                                     </Button>
                                 )}
+
+                                <Link
+                                    href={`/workspace/merge/request/${mr.id}`}
+                                >
+                                    <Button variant={"outline"}>
+                                        <Pen />
+                                        See Changes
+                                    </Button>
+                                </Link>
                             </div>
                         </li>
                     ))}

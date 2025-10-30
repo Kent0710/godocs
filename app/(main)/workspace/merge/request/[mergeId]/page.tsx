@@ -1,4 +1,3 @@
-import Comparison from "@/components/merge/request/comparison";
 import {
     PageContainer,
     PageContainerHeader,
@@ -6,7 +5,8 @@ import {
 } from "@/components/reusables/containers";
 import { Title, Paragraph } from "@/components/reusables/texts";
 import { getMerge } from "@/actions/merge/get-merge-action";
-import { BranchWithLines } from "@/components/merge/request/diff-viewer";
+import { CommitDiffViewer } from "@/components/commit/commit-diff-viewer";
+import { AcceptMergeButton } from "@/components/merge/accept-merge-button";
 
 interface MergeRequestPageProps {
     params: Promise<{
@@ -22,37 +22,34 @@ export default async function MergeRequestPage({
     if (!mergeId) return <div>Merge ID is missing </div>;
 
     const { originBranch, targetBranch } = await getMerge(mergeId);
-    
-    const originBranchWithLines: BranchWithLines = {
-        ...originBranch,
-        title: originBranch.name,
-        branch: originBranch.name,
-        lines: originBranch.isCommitted
-            ? originBranch.newContent.split("\n")
-            : originBranch.oldContent.split("\n"),
-    };
 
-    const targetBranchWithLines: BranchWithLines = {
-        ...targetBranch,
-        title: targetBranch.name,
-        branch: targetBranch.name,
-        lines: targetBranch.isCommitted
-            ? targetBranch.newContent.split("\n")
-            : targetBranch.oldContent.split("\n"),
-    };
+    const originBranchContent = originBranch.isCommitted
+        ? originBranch.newContent
+        : originBranch.oldContent;
+
+    const targetBranchContent = targetBranch.isCommitted
+        ? targetBranch.newContent
+        : targetBranch.oldContent;
 
     return (
         <PageContainer>
-            <PageContainerHeader className="pb-4 border-b mb-4">
+            <PageContainerHeader>
                 <Title>Merge Request: {mergeId}</Title>
                 <Paragraph>
                     Here you can review and manage the merge request details.
                 </Paragraph>
+                <div className="mt-4 pt-4 border-t">
+                    <AcceptMergeButton 
+                        originBranchContent={originBranchContent}
+                        targetBranchId={targetBranch.id}
+                        mergeId={mergeId}
+                    />
+                </div>
             </PageContainerHeader>
-            <PageContainerMain className="flex flex-col gap-4">
-                <Comparison
-                    originBranch={originBranchWithLines}
-                    targetBranch={targetBranchWithLines}
+            <PageContainerMain className="grid grid-cols-2 gap-6">
+                <CommitDiffViewer
+                    oldContent={targetBranchContent}
+                    newContent={originBranchContent}
                 />
             </PageContainerMain>
         </PageContainer>

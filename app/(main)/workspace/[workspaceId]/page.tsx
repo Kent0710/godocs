@@ -8,11 +8,13 @@ import {
 } from "@/components/reusables/containers";
 import { Title } from "@/components/reusables/texts";
 import CreateNewBranch from "@/components/branch/create-new-branch";
-import MergeButtonNav from "@/components/merge/merge-button-nav";
 import HistoryDropdown from "@/components/history/history-dropdown";
 import DeleteWorkspace from "@/components/workspace/delete-workspace";
 import { DeleteBranch } from "@/components/branch/delete-branch";
 import { getWorkspaceBranches } from "@/actions/branch/get-branches-action";
+import { MergeIcon } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 interface WorkspacePageProps {
     params: Promise<{
@@ -49,11 +51,20 @@ export default async function WorkspacePage({
                         currentBranch={currentBranch}
                         workspaceBranches={workspaceBranches}
                     />
-                    <HistoryDropdown workspaceId={workspaceId} branchId={currentBranch} />
-                    <CreateNewBranch workspaceId={workspaceId} 
-                    workspaceBranches={workspaceBranches}
+                    <HistoryDropdown
+                        workspaceId={workspaceId}
+                        branchId={currentBranch}
                     />
-                    <MergeButtonNav workspaceId={workspaceId} />
+                    <CreateNewBranch
+                        workspaceId={workspaceId}
+                        workspaceBranches={workspaceBranches}
+                    />
+                    <Link href={`/workspace/merge/${workspaceId}`}>
+                        <Button variant={"outline"}>
+                            <MergeIcon />
+                            Merge Requests
+                        </Button>
+                    </Link>
                     <DeleteBranch
                         workspaceId={workspaceId}
                         currentBranchId={currentBranch}
