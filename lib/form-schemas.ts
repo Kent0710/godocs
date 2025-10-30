@@ -31,3 +31,9 @@ export const createMergeRequestFormSchema = z
         message: "From and To branches cannot be the same.",
         path: ["targetBranchId"], // or ["originBranchId"], depending on where you want the error to appear
     });
+
+export const rewriteDocumentFormSchema = z.object({
+    additionalPrompt: z.string(),
+    tone: z.enum(["more-formal", "as-is", "more-casual"]).default("as-is"),
+    format: z.enum(["as-is", "markdown", "plain-text"]).default("as-is"),
+})

@@ -103,9 +103,50 @@ declare const Proofreader: {
                 startIndex: number;
                 endIndex: number;
                 replacement: string;
-                label?: string; 
-                explanation?: string; 
+                label?: string;
+                explanation?: string;
             }>;
         }>;
     }>;
 };
+
+// FOR REWRITER ==========================================================================
+
+declare type RewriterFormatOption = "as-is" | "markdown" | "plain-text";
+declare type RewriterToneOption = "more-formal" | "as-is" | "more-casual";
+declare const Rewriter: {
+    availability(): Promise<"available" | "unavailable" | "downloadable">;
+
+    create(options?: {
+        tone?: RewriterToneOption;
+        format?: RewriterFormatOption;
+        length?: "shorter" | "as-is" | "longer";
+        sharedContext?: string;
+        expectedInputLanguages?: string[];
+        expectedContextLanguages?: string[];
+        outputLanguage?: string;
+        signal?: AbortSignal;
+        monitor?: (monitor: EventTarget) => void;
+    }): Promise<{
+        rewrite(
+            text: string,
+            options?: {
+                context?: string;
+                tone?: "more-formal" | "as-is" | "more-casual";
+                signal?: AbortSignal;
+            }
+        ): Promise<string>;
+
+        rewriteStreaming?(
+            text: string,
+            options?: {
+                context?: string;
+                tone?: "more-formal" | "as-is" | "more-casual";
+                signal?: AbortSignal;
+            }
+        ): AsyncGenerator<string>;
+
+        destroy(): void;
+    }>;
+};
+

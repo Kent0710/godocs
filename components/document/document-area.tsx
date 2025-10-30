@@ -13,6 +13,7 @@ import { toast } from "sonner";
 import CommitDialog from "../commit/commit-dialog";
 import ProofreadDocumentButton from "./proofread-document-button";
 import GeminiNanoNotAvailable from "./gemini-nano-not-available";
+import RewriteDocumentButton from "./rewrite-document-button";
 
 export default function DocumentArea() {
     const pathname = usePathname();
@@ -27,9 +28,7 @@ export default function DocumentArea() {
     const [isProofreaderApiAvailable, setIsProofreaderApiAvailable] =
         useState(true);
     const [proofreader, setProofreader] = useState<{
-        proofread(
-            text: string
-        ): Promise<{
+        proofread(text: string): Promise<{
             correctedInput: string;
             corrections: {
                 startIndex: number;
@@ -174,18 +173,16 @@ export default function DocumentArea() {
 
     const handleProofread = async () => {
         if (!proofreader || !editableRef.current) {
-            toast.info(
-                "Proofreader is not available or there is no content."
-            );
+            toast.info("Proofreader is not available or there is no content.");
             return;
         }
 
         setIsProofreading(true);
         try {
             const originalContent = editableRef.current.innerText;
-            console.log('original content: ', originalContent);
+            console.log("original content: ", originalContent);
             const result = await proofreader.proofread(originalContent);
-            console.log('proofread result: ', result);
+            console.log("proofread result: ", result);
 
             if (editableRef.current) {
                 editableRef.current.innerText = result.correctedInput;
@@ -212,6 +209,69 @@ export default function DocumentArea() {
             );
             setBranchData(updatedBranch);
         }
+    };
+
+    // REWRITER
+    const [isRewriting, setIsRewriting] = useState(false);
+    const handleRewrite = async (
+        tone: RewriterToneOption,
+        format: RewriterFormatOption,
+        additionalRewritePrompt: string
+    ) => {
+        setIsRewriting(true);
+
+        toast.loading("Checking Rewrite AI model availability...");
+
+        // Check if the Rewrite API (Gemini Nano) is available
+        if (!("Rewriter" in self)) {
+            toast.warning("Rewrite API not available.");
+            return;
+        }
+
+        // plug in the rewriter token
+        const otMeta = document.createElement("meta");
+        otMeta.httpEquiv = "origin-trial";
+        otMeta.content = process.env.NEXT_PUBLIC_REWRITER_ORIGIN_TRIAL_TOKEN!;
+        document.head.append(otMeta);
+
+        if (otMeta.content === "") {
+            toast.error("Rewriter origin trial token is missing.");
+            return;
+        }
+
+        const availability = await Rewriter.availability();
+        if (availability === "unavailable") {
+            toast.error(
+                "Rewriter Gemini Nano model not available on this device."
+            );
+            return;
+        }
+
+        toast.dismiss();
+        toast.message("Rewriting document using Gemini Nano...");
+
+        const rewriter = await Rewriter.create({
+            tone: tone,
+            format: format,
+            outputLanguage: "en",
+        });
+
+        const textToBeRewritten = editableRef.current?.innerText || "";
+        const result = await rewriter.rewrite(textToBeRewritten, {
+            context: additionalRewritePrompt,
+        });
+
+        if (editableRef.current) {
+            editableRef.current.innerText = result;
+            handleInput(); // Trigger save
+        } else {
+            toast.error("No content to rewrite.");
+            return;
+        }
+
+        toast.success("Document rewritten successfully!");
+
+        setIsRewriting(false);
     };
 
     if (isLoading) {
@@ -243,6 +303,11 @@ export default function DocumentArea() {
                     ) : (
                         <GeminiNanoNotAvailable />
                     )}
+                    <RewriteDocumentButton
+                        onRewrite={handleRewrite}
+                        isRewriting={isRewriting}
+                    />
+
                     {allowCommit && (
                         <CommitDialog
                             branchId={branchData.id}
