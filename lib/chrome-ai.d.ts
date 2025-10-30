@@ -89,3 +89,23 @@ declare const LanguageModel: {
         inputQuota?: number;
     }>;
 };
+
+declare const Proofreader: {
+    availability(): Promise<"available" | "unavailable" | "downloadable">;
+
+    create(options?: {
+        expectedInputLanguages?: string[];
+        monitor?: (monitor: EventTarget) => void;
+    }): Promise<{
+        proofread(text: string): Promise<{
+            correctedInput: string;
+            corrections: Array<{
+                startIndex: number;
+                endIndex: number;
+                replacement: string;
+                label?: string; 
+                explanation?: string; 
+            }>;
+        }>;
+    }>;
+};

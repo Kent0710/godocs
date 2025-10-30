@@ -11,6 +11,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { toast } from "sonner";
 import CommitDialog from "../commit/commit-dialog";
+import ProofreadDocumentButton from "./proofread-document-button";
+import GeminiNanoNotAvailable from "./gemini-nano-not-available";
 
 export default function DocumentArea() {
     const pathname = usePathname();
@@ -21,6 +23,23 @@ export default function DocumentArea() {
     const [isLoading, setIsLoading] = useState(true);
     const [isSaving, setIsSaving] = useState(false);
     const [lastSaved, setLastSaved] = useState<Date | null>(null);
+    const [isProofreading, setIsProofreading] = useState(false);
+    const [isProofreaderApiAvailable, setIsProofreaderApiAvailable] =
+        useState(true);
+    const [proofreader, setProofreader] = useState<{
+        proofread(
+            text: string
+        ): Promise<{
+            correctedInput: string;
+            corrections: {
+                startIndex: number;
+                endIndex: number;
+                replacement: string;
+                label?: string;
+                explanation?: string;
+            }[];
+        }>;
+    } | null>(null);
 
     // Debounce timer ref
     const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -59,6 +78,29 @@ export default function DocumentArea() {
 
         fetchBranchData();
     }, [branchId]);
+
+    useEffect(() => {
+        async function initializeProofreader() {
+            if (typeof Proofreader === "undefined") {
+                setIsProofreaderApiAvailable(false);
+                return;
+            }
+            try {
+                if ((await Proofreader.availability()) === "available") {
+                    const session = await Proofreader.create();
+                    setProofreader(session);
+                } else {
+                    console.log("Proofreader not available");
+                    setIsProofreaderApiAvailable(false);
+                }
+            } catch (error) {
+                console.error("Failed to initialize proofreader:", error);
+                toast.error("Could not initialize proofreader.");
+                setIsProofreaderApiAvailable(false);
+            }
+        }
+        initializeProofreader();
+    }, []);
 
     // Set initial content
     useEffect(() => {
@@ -130,6 +172,35 @@ export default function DocumentArea() {
         };
     }, []);
 
+    const handleProofread = async () => {
+        if (!proofreader || !editableRef.current) {
+            toast.info(
+                "Proofreader is not available or there is no content."
+            );
+            return;
+        }
+
+        setIsProofreading(true);
+        try {
+            const originalContent = editableRef.current.innerText;
+            console.log('original content: ', originalContent);
+            const result = await proofreader.proofread(originalContent);
+            console.log('proofread result: ', result);
+
+            if (editableRef.current) {
+                editableRef.current.innerText = result.correctedInput;
+                handleInput(); // Trigger save
+            }
+
+            toast.success("Document proofread successfully!");
+        } catch (error) {
+            console.error("Error proofreading document:", error);
+            toast.error("Failed to proofread document.");
+        } finally {
+            setIsProofreading(false);
+        }
+    };
+
     const onCommitSuccess = async () => {
         setAllowCommit(false);
         if (branchData) {
@@ -163,7 +234,15 @@ export default function DocumentArea() {
         <div className="relative">
             {/* Save indicator */}
             <div className="absolute top-2 right-2 ">
-                <div>
+                <div className="flex flex-col gap-2">
+                    {isProofreaderApiAvailable ? (
+                        <ProofreadDocumentButton
+                            onProofread={handleProofread}
+                            isProofreading={isProofreading}
+                        />
+                    ) : (
+                        <GeminiNanoNotAvailable />
+                    )}
                     {allowCommit && (
                         <CommitDialog
                             branchId={branchData.id}
