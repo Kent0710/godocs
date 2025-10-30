@@ -5,7 +5,12 @@ import {
     SnapshotOptions,
     WithFieldValue,
 } from "firebase/firestore";
-import { BranchType, CommitType, MergeRequestType, WorkspaceType } from "@/lib/types";
+import {
+    BranchType,
+    CommitType,
+    MergeRequestType,
+    WorkspaceType,
+} from "@/lib/types";
 
 export const workspaceConverter: FirestoreDataConverter<WorkspaceType> = {
     toFirestore(
@@ -74,7 +79,8 @@ export const commitConverter: FirestoreDataConverter<CommitType> = {
             title: commit.title,
             description: commit.description,
             ownerId: commit.ownerId,
-            content : commit.content,
+            content: commit.content,
+            createdAt: commit.createdAt,
         };
     },
     fromFirestore(
@@ -88,7 +94,10 @@ export const commitConverter: FirestoreDataConverter<CommitType> = {
             title: data.title,
             description: data.description,
             ownerId: data.ownerId,
-            content : data.content,
+            content: data.content,
+            createdAt: data.createdAt?.toDate
+                ? data.createdAt.toDate()
+                : data.createdAt,
         };
     },
 };
@@ -100,9 +109,9 @@ export const mergeRequestConverter: FirestoreDataConverter<MergeRequestType> = {
         return {
             title: mergeRequest.title,
             description: mergeRequest.description,
-            ownerId : mergeRequest.ownerId,
-            originBranchId : mergeRequest.originBranchId,
-            targetBranchId : mergeRequest.targetBranchId,
+            ownerId: mergeRequest.ownerId,
+            originBranchId: mergeRequest.originBranchId,
+            targetBranchId: mergeRequest.targetBranchId,
         };
     },
     fromFirestore(
@@ -114,9 +123,9 @@ export const mergeRequestConverter: FirestoreDataConverter<MergeRequestType> = {
             id: snapshot.id,
             title: data.title,
             description: data.description,
-            ownerId : data.ownerId,
-            originBranchId : data.originBranchId,
-            targetBranchId : data.targetBranchId,
+            ownerId: data.ownerId,
+            originBranchId: data.originBranchId,
+            targetBranchId: data.targetBranchId,
         };
     },
 };

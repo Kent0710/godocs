@@ -25,6 +25,7 @@ export interface CommitType {
     description: string;
     ownerId: string;
     content : string;
+    createdAt: string;
 }
 
 export interface MergeRequestType {

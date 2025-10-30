@@ -23,11 +23,7 @@ export function WorkspaceClient({ workspaces }: WorkspaceClientProps) {
                     <CreateNewWorkspace />
                 </div>
             </WorkspaceHeader>
-            <ul className="grid grid-cols-4 gap-4">
-                {workspaces.map((workspace) => (
-                    <WorkspaceCard key={workspace.id} workspace={workspace} />
-                ))}
-            </ul>
+            <WorkspaceMain workspaces={workspaces} />
         </div>
     );
 }
@@ -36,6 +32,20 @@ interface WorkspaceHeaderProps {
     children: ReactNode;
 }
 
-export function WorkspaceHeader({ children }: WorkspaceHeaderProps) {
+function WorkspaceHeader({ children }: WorkspaceHeaderProps) {
     return <div className="space-y-2">{children}</div>;
+}
+
+function WorkspaceMain({ workspaces }: WorkspaceClientProps) {
+    return (
+        <ul className="grid grid-cols-4 gap-4">
+            {workspaces.length === 0 ? (
+                <p>No workspaces found.</p>
+            ) : (
+                workspaces.map((workspace) => (
+                    <WorkspaceCard key={workspace.id} workspace={workspace} />
+                ))
+            )}
+        </ul>
+    );
 }
