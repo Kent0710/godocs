@@ -3,12 +3,15 @@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { DiffLine } from "@/components/merge/request/diff-line";
+import { BranchType } from "@/lib/types";
 
 export interface DocumentVersion {
     title?: string;
     lines: string[];
     branch?: string;
 }
+
+export interface BranchWithLines extends BranchType, DocumentVersion {}
 
 export interface DiffData {
     type: 'added' | 'removed' | 'unchanged' | 'modified';

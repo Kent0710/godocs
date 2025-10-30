@@ -6,6 +6,7 @@ import {
 } from "@/components/reusables/containers";
 import { Title, Paragraph } from "@/components/reusables/texts";
 import { getMerge } from "@/actions/merge/get-merge-action";
+import { BranchWithLines } from "@/components/merge/request/diff-viewer";
 
 interface MergeRequestPageProps {
     params: Promise<{
@@ -21,8 +22,8 @@ export default async function MergeRequestPage({
     if (!mergeId) return <div>Merge ID is missing </div>;
 
     const { originBranch, targetBranch } = await getMerge(mergeId);
-
-    const originBranchWithLines = {
+    
+    const originBranchWithLines: BranchWithLines = {
         ...originBranch,
         title: originBranch.name,
         branch: originBranch.name,
@@ -31,7 +32,7 @@ export default async function MergeRequestPage({
             : originBranch.oldContent.split("\n"),
     };
 
-    const targetBranchWithLines = {
+    const targetBranchWithLines: BranchWithLines = {
         ...targetBranch,
         title: targetBranch.name,
         branch: targetBranch.name,
