@@ -21,6 +21,11 @@ export async function acceptMerge(
             isCommitted: true,
         });
 
+        const mergeRef = doc(db, 'merge', mergeId);
+        await updateDoc(mergeRef, {
+            status: 'merged',
+        })
+
         revalidatePath(`/workspace/merge/request/${mergeId}`);
 
         return { success: true };

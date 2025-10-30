@@ -2,6 +2,8 @@ import { getWorkspaceCode } from "@/actions/workspace/get-workspaces";
 import { Button } from "../ui/button";
 import { UserPlus } from "lucide-react";
 
+// TODO: add copy functionality
+
 interface WorkspaceCodeBlockProps {
     workspaceId : string;
 }

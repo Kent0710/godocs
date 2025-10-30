@@ -11,7 +11,7 @@ import { Title, Paragraph } from "@/components/reusables/texts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
-import { Merge, Pen } from "lucide-react";
+import {  Pen } from "lucide-react";
 import Link from "next/link";
 
 interface MergePageProps {
@@ -52,9 +52,20 @@ export default async function MergePage({ params }: MergePageProps) {
                             <div className="flex items-center gap-4">
                                 <p>#{mr.id}</p>
                                 <div>
-                                    <Badge variant={"outline"} className="mb-2">
-                                        {formatDate(mr.createdAt)}
-                                    </Badge>
+                                    <div className="flex items-center gap-2">
+                                        <Badge
+                                            variant={"outline"}
+                                            className="mb-2"
+                                        >
+                                            {formatDate(mr.createdAt)}
+                                        </Badge>
+                                        <Badge
+                                            variant={"outline"}
+                                            className="mb-2"
+                                        >
+                                            {mr.status}
+                                        </Badge>
+                                    </div>
                                     <p className="font-semibold">{mr.title}</p>
                                     <p className="text-muted-foreground">
                                         Opened no by no author
@@ -62,35 +73,32 @@ export default async function MergePage({ params }: MergePageProps) {
                                 </div>
                             </div>
                             {/* right section  */}
-                            <div className="flex gap-2">
-                                {mr.status === "closed" ? (
-                                    <OpenMergeButton
-                                        mergeId={mr.id}
-                                        workspaceId={workspaceId}
-                                    />
-                                ) : (
-                                    <CloseMergeButton
-                                        mergeId={mr.id}
-                                        workspaceId={workspaceId}
-                                    />
-                                )}
+                            {mr.status === "merged" ? (
+                                <div className="text-medium text-muted-foreground"> Already Merged </div>
+                            ) : (
+                                <div className="flex gap-2">
+                                    {mr.status === "closed" ? (
+                                        <OpenMergeButton
+                                            mergeId={mr.id}
+                                            workspaceId={workspaceId}
+                                        />
+                                    ) : (
+                                        <CloseMergeButton
+                                            mergeId={mr.id}
+                                            workspaceId={workspaceId}
+                                        />
+                                    )}
 
-                                {mr.status === "open" && (
-                                    <Button variant={"outline"}>
-                                        <Merge />
-                                        Merge
-                                    </Button>
-                                )}
-
-                                <Link
-                                    href={`/workspace/merge/request/${mr.id}`}
-                                >
-                                    <Button variant={"outline"}>
-                                        <Pen />
-                                        See Changes
-                                    </Button>
-                                </Link>
-                            </div>
+                                    <Link
+                                        href={`/workspace/merge/request/${mr.id}`}
+                                    >
+                                        <Button variant={"outline"}>
+                                            <Pen />
+                                            See Changes
+                                        </Button>
+                                    </Link>
+                                </div>
+                            )}
                         </li>
                     ))}
                 </ul>
