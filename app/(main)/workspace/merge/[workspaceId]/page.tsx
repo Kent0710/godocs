@@ -1,5 +1,6 @@
 import { getMergeRequests } from "@/actions/merge/get-merge-request-action";
 import CloseMergeButton from "@/components/merge/close-merge-button";
+import OpenMergeButton from "@/components/merge/open-merge-button";
 import CreateMergeRequestDialog from "@/components/merge/request/create-merge-request-dialog";
 import {
     PageContainer,
@@ -10,7 +11,7 @@ import { Title, Paragraph } from "@/components/reusables/texts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
-import { Merge} from "lucide-react";
+import { Merge } from "lucide-react";
 
 interface MergePageProps {
     params: Promise<{
@@ -61,10 +62,17 @@ export default async function MergePage({ params }: MergePageProps) {
                             </div>
                             {/* right section  */}
                             <div className="flex gap-2">
-                                <CloseMergeButton
-                                    mergeId={mr.id}
-                                    workspaceId={workspaceId}
-                                />
+                                {mr.status === "closed" ? (
+                                    <OpenMergeButton
+                                        mergeId={mr.id}
+                                        workspaceId={workspaceId}
+                                    />
+                                ) : (
+                                    <CloseMergeButton
+                                        mergeId={mr.id}
+                                        workspaceId={workspaceId}
+                                    />
+                                )}
 
                                 {mr.status === "open" && (
                                     <Button variant={"outline"}>
