@@ -34,6 +34,9 @@ export async function createWorkspace(
             ownerId: user.uid,
             oldContent: "",
             newContent: "",
+            isCommitted: true,
+            automations: [],
+            originBranch: null,
         });
 
         // create members subcollection

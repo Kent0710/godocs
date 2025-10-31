@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import WorkspaceCodeBlock from "@/components/workspace/workspace-code-block";
 import BranchHistoryButton from "@/components/history/branch-history-button";
+import { AutomateNavigationButton } from "@/components/automate/automate-navigation-button";
 
 interface WorkspacePageProps {
     params: Promise<{
@@ -65,6 +66,9 @@ export default async function WorkspacePage({
                             Merge Requests
                         </Button>
                     </Link>
+                    <AutomateNavigationButton 
+                        workspaceId={workspaceId}
+                    />
                     <DeleteBranch
                         workspaceId={workspaceId}
                         currentBranchId={currentBranch}

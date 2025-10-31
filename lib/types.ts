@@ -28,7 +28,10 @@ export interface BranchType {
     oldContent: string;
     newContent: string;
     isCommitted: boolean;
+    automations: string[];
+    originBranch: string | null; // null for main branch
 }
+
 
 export interface CommitType {
     id: string; // Firestore doc ID

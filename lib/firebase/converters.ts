@@ -57,6 +57,8 @@ export const branchConverter: FirestoreDataConverter<BranchType> = {
             oldContent: branch.oldContent,
             newContent: branch.newContent,
             isCommitted: branch.isCommitted || false,
+            automations: branch.automations,
+            originBranch: branch.originBranch,
         };
     },
 
@@ -73,6 +75,8 @@ export const branchConverter: FirestoreDataConverter<BranchType> = {
             oldContent: data.oldContent,
             newContent: data.newContent,
             isCommitted: data.isCommitted || false,
+            automations: data.automations || [],
+            originBranch: data.originBranch || null,
         };
     },
 };
