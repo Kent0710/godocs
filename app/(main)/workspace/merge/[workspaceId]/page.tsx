@@ -11,7 +11,7 @@ import { Title, Paragraph } from "@/components/reusables/texts";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
-import {  Pen } from "lucide-react";
+import { Pen } from "lucide-react";
 import Link from "next/link";
 
 interface MergePageProps {
@@ -74,7 +74,10 @@ export default async function MergePage({ params }: MergePageProps) {
                             </div>
                             {/* right section  */}
                             {mr.status === "merged" ? (
-                                <div className="text-medium text-muted-foreground"> Already Merged </div>
+                                <div className="text-medium text-muted-foreground">
+                                    {" "}
+                                    Already Merged{" "}
+                                </div>
                             ) : (
                                 <div className="flex gap-2">
                                     {mr.status === "closed" ? (
@@ -88,17 +91,15 @@ export default async function MergePage({ params }: MergePageProps) {
                                             workspaceId={workspaceId}
                                         />
                                     )}
-
-                                    <Link
-                                        href={`/workspace/merge/request/${mr.id}`}
-                                    >
-                                        <Button variant={"outline"}>
-                                            <Pen />
-                                            See Changes
-                                        </Button>
-                                    </Link>
                                 </div>
                             )}
+
+                            <Link href={`/workspace/merge/request/${mr.id}`}>
+                                <Button variant={"outline"}>
+                                    <Pen />
+                                    See Changes
+                                </Button>
+                            </Link>
                         </li>
                     ))}
                 </ul>

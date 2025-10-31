@@ -121,6 +121,7 @@ export const mergeRequestConverter: FirestoreDataConverter<MergeRequestType> = {
             targetBranchId: mergeRequest.targetBranchId,
             createdAt: mergeRequest.createdAt,
             status: mergeRequest.status,
+            originalContent: mergeRequest.originalContent,
         };
     },
     fromFirestore(
@@ -139,6 +140,7 @@ export const mergeRequestConverter: FirestoreDataConverter<MergeRequestType> = {
                 ? data.createdAt.toDate()
                 : data.createdAt,
             status: data.status,
+            originalContent: data.originalContent,
         };
     },
 };

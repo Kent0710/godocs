@@ -50,4 +50,5 @@ export interface MergeRequestType {
     targetBranchId: string;
     status: "open" | "closed" | "merged";
     createdAt: string;
+    originalContent: string;
 }

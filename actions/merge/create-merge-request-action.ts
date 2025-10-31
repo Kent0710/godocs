@@ -1,11 +1,12 @@
-'use server'
+"use server";
 
 import { createMergeRequestFormSchema } from "@/lib/form-schemas";
 import { getUserFromSession } from "../auth";
-import { addDoc, collection,  } from "firebase/firestore";
+import { addDoc, collection, doc, getDoc } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 import { db } from "@/lib/firebase/firebase";
-import {z} from 'zod'
+import { z } from "zod";
+import { branchConverter } from "@/lib/firebase/converters";
 
 export async function createMergeRequestAction(
     workspaceId: string,
@@ -17,13 +18,33 @@ export async function createMergeRequestAction(
 
     if (!data.originBranchId || !data.targetBranchId) {
         throw new Error("Origin and target branches must be specified.");
-    };
+    }
 
     try {
         const user = await getUserFromSession();
 
         if (!user) {
             throw new Error("User not authenticated.");
+        }
+
+        const targetBranchRef = doc(
+            db, 
+            "branch",
+            data.targetBranchId!
+        ).withConverter(branchConverter);
+        const targetBranchSnap = await getDoc(targetBranchRef);
+
+        if (!targetBranchSnap.exists()) {
+            throw new Error("Origin branch not found.");
+        }
+
+        const targetBranchData = targetBranchSnap.data();
+
+        let originalContent;
+        if (targetBranchData.isCommitted) {
+            originalContent = targetBranchData.newContent;
+        } else {
+            originalContent = targetBranchData.oldContent;
         }
 
         const newMergeRequest = await addDoc(collection(db, "merge"), {
@@ -34,7 +55,8 @@ export async function createMergeRequestAction(
             workspaceId: workspaceId,
             ownerId: user.uid,
             createdAt: new Date(),
-            status: 'open',
+            status: "open",
+            originalContent: originalContent,
         });
 
         revalidatePath(`/workspace/merge/${workspaceId}`);

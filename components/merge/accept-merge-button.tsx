@@ -79,7 +79,7 @@ export function AcceptMergeButton({
                 )}
             </Button>
 
-            {!originNotCommit && (
+            {originNotCommit && (
                 <div>
                     <p>
                         There are uncommitted changes in the origin branch.{" "}
