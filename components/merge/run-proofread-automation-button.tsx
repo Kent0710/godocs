@@ -2,19 +2,22 @@
 
 import { WorkflowIcon, Loader } from "lucide-react";
 import { Button } from "../ui/button";
-import {  useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
-import { UpdateMergeAutomationsResult } from "@/actions/merge/update-merge-automations-result-action";
+import { updateMergeAutomationsResult } from "@/actions/merge/update-merge-automations-result-action";
+import { MergeAutomationType } from "@/lib/types";
 
-interface RunMergeAutomationsButtonProps {
+interface RunProofreadAutomationsButtonProps {
     mergeId: string;
     newContent: string;
+    setExistingAutomations: Dispatch<SetStateAction<MergeAutomationType[]>>;
 }
 
-export function RunMergeAutomationsButton({
+export function RunProofreadAutomationsButton({
     mergeId,
     newContent,
-}: RunMergeAutomationsButtonProps) {
+    setExistingAutomations,
+}: RunProofreadAutomationsButtonProps) {
     const [isRunning, setIsRunning] = useState(false);
 
     const handleRunAutomations = async () => {
@@ -54,36 +57,31 @@ export function RunMergeAutomationsButton({
 
         console.log("Proofreader result:", result);
 
-        const response = await UpdateMergeAutomationsResult(
+        const title = "Merge Automation (Proofread)";
+
+        const response = await updateMergeAutomationsResult(
+            title,
             mergeId,
             newContent,
             result.correctedInput,
             result.corrections
         );
 
-        // set the result
-        // setMergeData((prev) => {
-        //     if (!prev) return prev;
-        //     return {
-        //         ...prev,
-        //         automations: prev.automations.map((automation) =>
-
-        //             automation.name === "Proofreading Automation"
-        //                 ? {
-        //                       ...automation,
-        //                         status: "completed",
-        //                         content: newContent,
-        //                         comment: JSON.stringify({
-        //                             correctedInput: result.correctedInput,
-        //                             corrections: result.corrections,
-        //                         }),
-        //                   }
-        //                 : automation
-        //         ),
-        //     };
-        // });
+        setExistingAutomations((prev) => {
+            const filtered = prev.filter(
+                (automation) => automation.name !== "proofread"
+            );
+            return [
+                ...filtered,
+                {
+                    comment: result.correctedInput,
+                    name: "proofread",
+                    content: newContent,
+                    status: "completed",
+                },
+            ];
+        });
         
-
         if (!response.success) {
             toast.error("Failed to update merge automations result.");
             setIsRunning(false);
@@ -94,24 +92,24 @@ export function RunMergeAutomationsButton({
 
         toast.success("Merge automations completed.");
 
-            setIsRunning(false);
-        };
+        setIsRunning(false);
+    };
 
-        return (
-            <>
-                <Button
-                    variant={"outline"}
-                    disabled={isRunning}
-                    onClick={handleRunAutomations}
-                >
-                    {isRunning ? (
-                        <Loader className="animate-spin mr-2" />
-                    ) : (
-                        <>
-                            <WorkflowIcon /> Run Merge Automations
-                        </>
-                    )}
-                </Button>
-            </>
-        );
-    }
+    return (
+        <>
+            <Button
+                variant={"outline"}
+                disabled={isRunning}
+                onClick={handleRunAutomations}
+            >
+                {isRunning ? (
+                    <Loader className="animate-spin mr-2" />
+                ) : (
+                    <>
+                        <WorkflowIcon /> Run Proof Automation
+                    </>
+                )}
+            </Button>
+        </>
+    );
+}

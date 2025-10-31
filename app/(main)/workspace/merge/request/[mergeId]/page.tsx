@@ -5,10 +5,9 @@ import {
 } from "@/components/reusables/containers";
 import { Title, Paragraph } from "@/components/reusables/texts";
 import { getMerge } from "@/actions/merge/get-merge-action";
-import { CommitDiffViewer } from "@/components/commit/commit-diff-viewer";
 import { AcceptMergeButton } from "@/components/merge/accept-merge-button";
 import { RevertToMergeButton } from "@/components/merge/revert-to-merge-button";
-import { RunMergeAutomationsButton } from "@/components/merge/run-merge-automations-button";
+import MergeRequestTabs from "@/components/merge/request/merge-request-tabs";
 
 interface MergeRequestPageProps {
     params: Promise<{
@@ -54,10 +53,6 @@ export default async function MergeRequestPage({
                                 targetBranchId={targetBranch.id}
                                 mergeId={mergeId}
                             />
-                            <RunMergeAutomationsButton 
-                                mergeId={mergeId}
-                                newContent={originBranchContent}
-                            />
                         </div>
                     ) : (
                         <div className="flex items-center gap-2">
@@ -74,8 +69,9 @@ export default async function MergeRequestPage({
                     )}
                 </div>
             </PageContainerHeader>
-            <PageContainerMain className="grid grid-cols-2 gap-6 ">
-                <CommitDiffViewer
+            <PageContainerMain >
+                <MergeRequestTabs 
+                    mergeId={mergeId}
                     oldContent={targetBranchContent}
                     newContent={originBranchContent}
                 />

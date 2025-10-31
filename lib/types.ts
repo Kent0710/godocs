@@ -49,6 +49,8 @@ export type MergeAutomationType = {
     status: "pending" | "completed" | "failed";
     content?: string;
     comment?: string;
+    correctedInput? : string;
+    corrections?: string[];
 }
 
 export interface MergeRequestType {
