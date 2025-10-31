@@ -25,10 +25,10 @@ export default function HistoryDropdown({ workspaceId, branchId }: HistoryDropdo
             </DropdownMenuTrigger>
             <DropdownMenuContent>
                 <DropdownMenuItem>
-                    <Link href={`/workspace/history/${workspaceId}`}>
+                    <Link href={`/history/merge/${workspaceId}`}>
                         <Button variant={"ghost"}>
                             <HistoryIcon />
-                            Workspace History
+                            Merge History
                         </Button>
                     </Link>
                 </DropdownMenuItem>

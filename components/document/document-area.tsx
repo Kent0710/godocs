@@ -77,6 +77,17 @@ export default function DocumentArea() {
         }
 
         fetchBranchData();
+
+        return () => {
+            setAllowCommit(false);
+            setBranchData(null);
+            setIsLoading(true);
+            setIsSaving(false);
+            setLastSaved(null);
+            if (saveTimeoutRef.current) {
+                clearTimeout(saveTimeoutRef.current);
+            }
+        }
     }, [branchId]);
 
     useEffect(() => {
