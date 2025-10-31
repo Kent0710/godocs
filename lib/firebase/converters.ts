@@ -22,25 +22,28 @@ export const workspaceConverter: FirestoreDataConverter<WorkspaceType> = {
             createdAt: workspace.createdAt,
             ownerId: workspace.ownerId,
             mainBranchId: workspace.mainBranchId,
-            code: workspace.code
+            code: workspace.code,
         };
     },
 
     fromFirestore(
         snapshot: QueryDocumentSnapshot,
-        options?: SnapshotOptions
+        options: SnapshotOptions
     ): WorkspaceType {
         const data = snapshot.data(options)!;
+
         return {
             id: snapshot.id,
             name: data.name,
-            description: data.description,
-            createdAt: data.created_at?.toDate
+            description: data.description ?? "",
+            createdAt: data.createdAt?.toDate
                 ? data.createdAt.toDate()
                 : data.createdAt,
             ownerId: data.ownerId,
             mainBranchId: data.mainBranchId,
-            code: data.code
+            code: data.code,
+            members: [], 
+            currentUserRole: undefined,
         };
     },
 };

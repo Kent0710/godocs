@@ -8,6 +8,7 @@ import { WorkspaceCard } from "./workspace-card";
 import { Input } from "../ui/input";
 import { ReactNode } from "react";
 import CreateNewWorkspace from "./create-new-workspace";
+import JoinNewWorkspace from "./join-new-workspace";
 
 interface WorkspaceClientProps {
     workspaces: WorkspaceType[];
@@ -18,9 +19,10 @@ export function WorkspaceClient({ workspaces }: WorkspaceClientProps) {
         <div className="space-y-4">
             <WorkspaceHeader>
                 <Subtitle>Existing Workspaces</Subtitle>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
                     <Input placeholder="Search..." />
                     <CreateNewWorkspace />
+                    <JoinNewWorkspace />
                 </div>
             </WorkspaceHeader>
             <WorkspaceMain workspaces={workspaces} />

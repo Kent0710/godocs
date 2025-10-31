@@ -7,6 +7,12 @@ export const createNewWorkspaceFormSchema = z.object({
     description: z.string().optional(),
 });
 
+export const joinWorkspaceFormSchema = z.object({
+    code: z
+        .string()
+        .min(6, { message: "Workspace code must be at least 6 character." }),
+});
+
 export const createNewBranchFormSchema = z.object({
     name: z.string().min(1, "Branch name must be at least 1 characters."),
     option: z.enum(["independent", "dependent"]).default("dependent"),
@@ -36,11 +42,13 @@ export const rewriteDocumentFormSchema = z.object({
     additionalPrompt: z.string(),
     tone: z.enum(["more-formal", "as-is", "more-casual"]).default("as-is"),
     format: z.enum(["as-is", "markdown", "plain-text"]).default("as-is"),
-})
+});
 
 export const writeDocumentFormSchema = z.object({
-    writingPrompt: z.string().min(1, "Writing prompt must be at least 1 character."),
+    writingPrompt: z
+        .string()
+        .min(1, "Writing prompt must be at least 1 character."),
     tone: z.enum(["formal", "neutral", "casual"]).default("neutral"),
     format: z.enum(["markdown", "plain-text"]).default("plain-text"),
     length: z.enum(["short", "medium", "long"]).default("medium"),
-})
+});

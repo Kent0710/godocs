@@ -1,6 +1,6 @@
 "use server";
 
-import { addDoc, collection } from "firebase/firestore";
+import { addDoc, collection, doc, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase/firebase";
 import { z } from "zod";
 import { createNewWorkspaceFormSchema } from "@/lib/form-schemas";
@@ -34,6 +34,21 @@ export async function createWorkspace(
             ownerId: user.uid,
             oldContent: "",
             newContent: "",
+        });
+
+        // create members subcollection
+        const memberRef = doc(
+            db,
+            "workspace",
+            newWorkspace.id,
+            "member",
+            user.uid
+        );
+        await setDoc(memberRef, {
+            userId: user.uid,
+            role: "owner",
+            joinedAt: new Date(),
+            name: user.name || "",
         });
 
         revalidatePath("/home");
