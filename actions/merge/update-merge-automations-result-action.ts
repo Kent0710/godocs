@@ -2,6 +2,7 @@
 
 import { mergeRequestConverter } from "@/lib/firebase/converters";
 import { db } from "@/lib/firebase/firebase";
+import { MergeAutomationType } from "@/lib/types";
 import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
@@ -30,8 +31,10 @@ export async function updateMergeAutomationsResult(
 
         const mergeData = mergeSnap.data();
 
+        console.log("Current merge automations:", mergeData.automations);
+
         // Ensure automations is always an array
-        const automations = Array.isArray(mergeData.automations)
+        const automations: MergeAutomationType[] = Array.isArray(mergeData.automations)
             ? mergeData.automations
             : Object.values(mergeData.automations || {});
 
@@ -51,7 +54,7 @@ export async function updateMergeAutomationsResult(
         });
 
         await updateDoc(mergeRef, {
-            automations: updatedAutomations, // ✅ store back as a real array
+            automations: updatedAutomations,
         });
 
         revalidatePath(`/workspace/merge/request/${mergeId}`);
