@@ -1,6 +1,5 @@
 import { BranchDropdown } from "@/components/branch/branch-dropdown";
 import DocumentArea from "@/components/document/document-area";
-import ToolBar from "@/components/document/toolbar";
 import {
     PageContainer,
     PageContainerHeader,
@@ -80,7 +79,6 @@ export default async function WorkspacePage({
             </PageContainerHeader>
 
             <PageContainerMain className="space-y-4">
-                <ToolBar />
                 <DocumentArea />
             </PageContainerMain>
         </PageContainer>
