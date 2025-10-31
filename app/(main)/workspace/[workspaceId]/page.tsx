@@ -16,6 +16,7 @@ import Link from "next/link";
 import WorkspaceCodeBlock from "@/components/workspace/workspace-code-block";
 import BranchHistoryButton from "@/components/history/branch-history-button";
 import { AutomateNavigationButton } from "@/components/automate/automate-navigation-button";
+import { getWorkspaceName } from "@/actions/workspace/get-workspaces";
 
 interface WorkspacePageProps {
     params: Promise<{
@@ -33,6 +34,8 @@ export default async function WorkspacePage({
     const workspaceId = (await params).workspaceId;
     const currentBranch = (await searchParams)?.branch || "main";
 
+    const workspaceName = await getWorkspaceName(workspaceId);
+
     const workspaceBranches = await getWorkspaceBranches(workspaceId);
 
     if (!workspaceId) return <div> Workspace ID is missing </div>;
@@ -41,40 +44,40 @@ export default async function WorkspacePage({
         <PageContainer>
             <PageContainerHeader>
                 <div className="pb-4 border-b mb-4 flex justify-between items-center">
-                    <Title>Workspace: {workspaceId}</Title>
-                    <div>
+                    <Title>Workspace: {workspaceName || ""} </Title>
+                    <div className="flex items-center gap-2">
+                        <WorkspaceCodeBlock workspaceId={workspaceId} />
                         <DeleteWorkspace workspaceId={workspaceId} />
                     </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-4 items-center">
                     <BranchDropdown
                         workspaceId={workspaceId}
                         currentBranch={currentBranch}
                         workspaceBranches={workspaceBranches}
                     />
-                    <BranchHistoryButton
-                        branchId={currentBranch}
-                    />
-                    <CreateNewBranch
-                        workspaceId={workspaceId}
-                        workspaceBranches={workspaceBranches}
-                    />
-                    <Link href={`/workspace/merge/${workspaceId}`}>
+                    <section className="flex gap-2 items-center border-x px-4">
+                        <CreateNewBranch
+                            workspaceId={workspaceId}
+                            workspaceBranches={workspaceBranches}
+                        />
+                        <BranchHistoryButton branchId={currentBranch} />
+                        <DeleteBranch
+                            workspaceId={workspaceId}
+                            currentBranchId={currentBranch}
+                        />
+                    </section>
+
+                    <Link
+                        href={`/workspace/merge/${workspaceId}`}
+                        className="pr-4 border-r"
+                    >
                         <Button variant={"outline"}>
                             <MergeIcon />
                             Merge Requests
                         </Button>
                     </Link>
-                    <AutomateNavigationButton 
-                        workspaceId={workspaceId}
-                    />
-                    <DeleteBranch
-                        workspaceId={workspaceId}
-                        currentBranchId={currentBranch}
-                    />
-                    <WorkspaceCodeBlock 
-                        workspaceId={workspaceId}
-                    />
+                    <AutomateNavigationButton workspaceId={workspaceId} />
                 </div>
             </PageContainerHeader>
 

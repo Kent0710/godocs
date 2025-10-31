@@ -50,9 +50,7 @@ export async function getWorkspaces(): Promise<WorkspaceType[]> {
             workspaceConverter
         );
         const workspaceDoc = await getDoc(workspaceRef);
-        return workspaceDoc.exists()
-            ? { ...workspaceDoc.data() }
-            : null;
+        return workspaceDoc.exists() ? { ...workspaceDoc.data() } : null;
     });
 
     const workspaceList = (await Promise.all(workspacePromises)).filter(
@@ -114,6 +112,27 @@ export async function getWorkspaceCode(workspaceId: string) {
     } catch (error) {
         throw new Error(
             "Failed to get workspace code: " + (error as Error).message
+        );
+    }
+}
+
+export async function getWorkspaceName(workspaceId: string) {
+    if (!workspaceId) throw new Error("Workspace ID is required.");
+
+    try {
+        const workspaceRef = doc(db, "workspace", workspaceId).withConverter(
+            workspaceConverter
+        );
+        const snapshot = await getDoc(workspaceRef);
+
+        if (!snapshot.exists()) {
+            return "Unnamed Workspace";
+        }
+        const workspaceData = snapshot.data();
+        return workspaceData.name || "Unnamed Workspace";
+    } catch (error) {
+        throw new Error(
+            "Failed to get workspace name: " + (error as Error).message
         );
     }
 }

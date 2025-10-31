@@ -1,12 +1,10 @@
-/*
-    COMPONENT RESPONSIBLE FOR DISPLAYING THE WORKSPACE CLIENT SIDE
-*/
+"use client";
 
 import { WorkspaceType } from "@/lib/types";
 import { Subtitle } from "../reusables/texts";
 import { WorkspaceCard } from "./workspace-card";
 import { Input } from "../ui/input";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import CreateNewWorkspace from "./create-new-workspace";
 import JoinNewWorkspace from "./join-new-workspace";
 
@@ -14,13 +12,26 @@ interface WorkspaceClientProps {
     workspaces: WorkspaceType[];
 }
 
-export function WorkspaceClient({ workspaces }: WorkspaceClientProps) {
+export function WorkspaceClient({
+    workspaces: initialWorkspaces,
+}: WorkspaceClientProps) {
+    const [workspaces, setWorkspaces] =
+        useState<WorkspaceType[]>(initialWorkspaces);
+
+    const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const query = event.target.value.toLowerCase();
+        const filteredWorkspaces = initialWorkspaces.filter((workspace) =>
+            workspace.name.toLowerCase().includes(query)
+        );
+        setWorkspaces(filteredWorkspaces);
+    };
+
     return (
         <div className="space-y-4">
             <WorkspaceHeader>
                 <Subtitle>Existing Workspaces</Subtitle>
                 <div className="flex items-center gap-2">
-                    <Input placeholder="Search..." />
+                    <Input placeholder="Search..." onChange={handleSearch} />
                     <CreateNewWorkspace />
                     <JoinNewWorkspace />
                 </div>

@@ -13,7 +13,7 @@ export function AutomateNavigationButton({
         <Link href={`/automate/workspace/${workspaceId}`}>
             <Button variant={"outline"}>
                 <Workflow className="w-4 h-4" />
-                Automate
+                Automate Workflow
             </Button>
         </Link>
     );
