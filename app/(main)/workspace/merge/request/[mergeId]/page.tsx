@@ -61,6 +61,7 @@ export default async function MergeRequestPage({
                             <RevertToMergeButton
                                 branchId={targetBranch.id}
                                 revertContent={mergeData.originalContent}
+                                targetBranchContent={targetBranchContent}
                             />
                         </div>
                     )}
