@@ -24,11 +24,15 @@ export function BranchDropdown({
     currentBranch,
     workspaceBranches,
 }: BranchDropdownProps) {
+    const currentBranchName = workspaceBranches.find(
+        (branch) => branch.id === currentBranch
+    )?.name;
+
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
                 <Button variant={"outline"}>
-                    <GitBranch /> {currentBranch} <ChevronDown />
+                    <GitBranch /> {currentBranchName} <ChevronDown />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
