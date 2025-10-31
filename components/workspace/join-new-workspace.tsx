@@ -34,7 +34,7 @@ export default function JoinNewWorkspace() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant={"outline"}>
+                <Button variant={"secondary"}>
                     <UsersRound className="mr-2" />
                     Join Workspace
                 </Button>

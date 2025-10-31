@@ -35,7 +35,7 @@ export default function CreateNewWorkspace() {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button variant={"outline"}>
+                <Button>
                     <FilePlus2 className="mr-2" />
                     New Workspace
                 </Button>

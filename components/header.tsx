@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { Button } from "./ui/button";
-import { LogOut, User } from "lucide-react";
+import { ChevronDown, LogOut, User } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -15,6 +15,7 @@ import {
 
 import { getUsername } from "@/actions/user/get-username";
 import { signOut } from "@/actions/auth";
+import { ThemeToggle } from "./ui/theme-toggle";
 
 interface HeaderProps {
     className?: string;
@@ -43,7 +44,7 @@ export default function Header({ className }: HeaderProps) {
     return (
         <header
             className={twMerge(
-                `flex items-center justify-between w-full py-2 px-8 border-b`,
+                `flex items-center justify-between w-full py-2 px-8 border-b bg-foreground/10`,
                 className
             )}
         >
@@ -64,11 +65,12 @@ export default function Header({ className }: HeaderProps) {
             </section>
 
             {/* right section  */}
-            <section>
+            <section className="flex items-center gap-2">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant={"outline"}>
                             <User /> {username}
+                            <ChevronDown />
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
@@ -83,6 +85,7 @@ export default function Header({ className }: HeaderProps) {
                         </Button>
                     </DropdownMenuContent>
                 </DropdownMenu>
+                <ThemeToggle />
             </section>
         </header>
     );
