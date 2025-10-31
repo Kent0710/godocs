@@ -6,7 +6,7 @@ import { doc, getDoc, updateDoc } from "firebase/firestore";
 import { revalidatePath } from "next/cache";
 
 export async function updateMergeAutomationsResult(
-    title: string,
+    automationName: string,
     mergeId: string,
     content: string,
     correctedInput: string,
@@ -37,17 +37,17 @@ export async function updateMergeAutomationsResult(
 
         // Find which automation you want to update
         const updatedAutomations = automations.map((a) => {
-            if (a.name === "proofread") {
+            if (a.name === automationName) {
                 return {
                     ...a,
                     status: "completed",
                     content,
                     correctedInput: correctedInput,
                     corrections: corrections,
-                    title: title,
                 };
+            } else {
+                return a;
             }
-            return a;
         });
 
         await updateDoc(mergeRef, {

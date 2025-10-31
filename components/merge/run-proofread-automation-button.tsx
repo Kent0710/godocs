@@ -57,10 +57,8 @@ export function RunProofreadAutomationsButton({
 
         console.log("Proofreader result:", result);
 
-        const title = "Merge Automation (Proofread)";
-
         const response = await updateMergeAutomationsResult(
-            title,
+            'proofread',
             mergeId,
             newContent,
             result.correctedInput,

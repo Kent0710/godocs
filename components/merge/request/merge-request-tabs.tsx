@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { getMergeAutomations } from "@/actions/automations/get-merge-automations-action";
 import { RunProofreadAutomationsButton } from "../run-proofread-automation-button";
 import { MergeAutomationType } from "@/lib/types";
+import { RunSummarizeAutomationButton } from "../run-summarize-automation-button";
 
 interface MergeRequestTabsProps {
     mergeId: string;
@@ -46,7 +47,6 @@ export default function MergeRequestTabs({
         <Tabs defaultValue="comparison">
             <TabsList>
                 <TabsTrigger value="comparison">Merge Comparison</TabsTrigger>
-
                 {existingAutomations.map((automation, index) => (
                     <TabsTrigger key={index} value={automation.name}>
                         {automation.name}
@@ -68,10 +68,17 @@ export default function MergeRequestTabs({
                             setExistingAutomations={setExistingAutomations}
                         />
                     )}
+                    {res.name === 'summarize' && (
+                        <RunSummarizeAutomationButton 
+                            mergeId={mergeId}
+                            newContent={newContent}
+                            setExistingAutomations={setExistingAutomations}
+                        />
+                    )}
                     <div className="grid grid-cols-2 gap-6 mt-4">
                         <CommitDiffViewer
                             oldContent={newContent}
-                            newContent={res.correctedInput || ""}
+                            newContent={res.comment || res.correctedInput || ""}
                         />
                     </div>
                 </TabsContent>
