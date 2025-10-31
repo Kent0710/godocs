@@ -40,6 +40,7 @@ export default async function MergeRequestPage({
                 </Paragraph>
                 <div className="mt-4 pt-4 border-t">
                     <AcceptMergeButton 
+                        originBranchId={originBranch.id}
                         originBranchContent={originBranchContent}
                         targetBranchId={targetBranch.id}
                         mergeId={mergeId}
