@@ -48,7 +48,7 @@ export async function createMergeRequestAction(
         }
 
         // get the branch enabled automations
-        const branchAutomations = targetBranchData.automations || [];
+        const branchAutomations = targetBranchData.automations.filter((item) => item !== 'none') || [];
 
         const newMergeRequest = await addDoc(collection(db, "merge"), {
             title: data.title,
