@@ -8,7 +8,6 @@ import {
 } from "@/components/reusables/containers";
 import { Title } from "@/components/reusables/texts";
 import CreateNewBranch from "@/components/branch/create-new-branch";
-import HistoryDropdown from "@/components/history/history-dropdown";
 import DeleteWorkspace from "@/components/workspace/delete-workspace";
 import { DeleteBranch } from "@/components/branch/delete-branch";
 import { getWorkspaceBranches } from "@/actions/branch/get-branches-action";
@@ -16,6 +15,7 @@ import { MergeIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import WorkspaceCodeBlock from "@/components/workspace/workspace-code-block";
+import BranchHistoryButton from "@/components/history/branch-history-button";
 
 interface WorkspacePageProps {
     params: Promise<{
@@ -52,8 +52,7 @@ export default async function WorkspacePage({
                         currentBranch={currentBranch}
                         workspaceBranches={workspaceBranches}
                     />
-                    <HistoryDropdown
-                        workspaceId={workspaceId}
+                    <BranchHistoryButton
                         branchId={currentBranch}
                     />
                     <CreateNewBranch
