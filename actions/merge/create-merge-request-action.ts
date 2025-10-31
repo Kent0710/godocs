@@ -28,7 +28,7 @@ export async function createMergeRequestAction(
         }
 
         const targetBranchRef = doc(
-            db, 
+            db,
             "branch",
             data.targetBranchId!
         ).withConverter(branchConverter);
@@ -47,6 +47,9 @@ export async function createMergeRequestAction(
             originalContent = targetBranchData.oldContent;
         }
 
+        // get the branch enabled automations
+        const branchAutomations = targetBranchData.automations || [];
+
         const newMergeRequest = await addDoc(collection(db, "merge"), {
             title: data.title,
             description: data.description,
@@ -57,6 +60,12 @@ export async function createMergeRequestAction(
             createdAt: new Date(),
             status: "open",
             originalContent: originalContent,
+            automations: branchAutomations.map((name) => ({
+                name,
+                status: "pending",
+                content: '',
+                comment: '',
+            })),
         });
 
         revalidatePath(`/workspace/merge/${workspaceId}`);

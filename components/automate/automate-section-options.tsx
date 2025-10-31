@@ -86,7 +86,6 @@ export default function AutomateSectionOptions() {
                     </Button>
                 )}
             </div>
-            <pre>{JSON.stringify(automations, null, 2)}</pre>
             <ul className="flex flex-col gap-4">
                 <li className="flex items-center justify-between">
                     <p className="font-medium">

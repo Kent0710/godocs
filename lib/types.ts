@@ -44,6 +44,13 @@ export interface CommitType {
     createdAt: string;
 }
 
+export type MergeAutomationType = {
+    name: string;
+    status: "pending" | "completed" | "failed";
+    content?: string;
+    comment?: string;
+}
+
 export interface MergeRequestType {
     id: string; // Firestore doc ID
     title: string;
@@ -54,4 +61,5 @@ export interface MergeRequestType {
     status: "open" | "closed" | "merged";
     createdAt: string;
     originalContent: string;
+    automations: MergeAutomationType[];
 }
