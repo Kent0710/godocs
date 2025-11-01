@@ -99,8 +99,12 @@ export default function LandingPage() {
                     Built-in AI Challenge 2025.
                 </p>
                 <div className="mt-8 flex gap-2">
-                    <Button>Get Started</Button>
-                    <Button variant={"secondary"}>Project Resources</Button>
+                    <Link href={"/home"}>
+                        <Button>Get Started</Button>
+                    </Link>
+                    <Link href={"/resources"}>
+                        <Button variant={"secondary"}>Project Resources</Button>
+                    </Link>
                 </div>
             </section>
 
