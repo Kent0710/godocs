@@ -4,6 +4,12 @@ import { Fragment } from "react";
 
 const BASE_SECTION_CLASSNAME = "p-4 border rounded";
 
+function sanitizeContent(html: string): string {
+    const temp = document.createElement("div");
+    temp.innerHTML = html;
+    return temp.textContent || temp.innerText || "";
+}
+
 interface CommitDiffViewerProps {
     oldContent: string;
     newContent: string;
@@ -99,7 +105,10 @@ export function CommitDiffViewer({
         return result;
     };
 
-    const changes = diff(oldContent, newContent);
+    const changes = diff(
+        sanitizeContent(oldContent),
+        sanitizeContent(newContent)
+    );
 
     return (
         <>
