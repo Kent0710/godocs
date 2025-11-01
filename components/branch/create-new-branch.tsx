@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
-import { Loader, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -37,15 +37,25 @@ import { createNewBranchFormSchema } from "@/lib/form-schemas";
 import { toast } from "sonner";
 import { createBranchAction } from "@/actions/branch/create-branch-action";
 import { BranchType } from "@/lib/types";
+import { Dispatch, SetStateAction, useState } from "react";
+import LoaderButton from "../reusables/loader-button";
 
 interface CreateNewBranchProps {
     workspaceId?: string;
     workspaceBranches: BranchType[];
 }
 
-export default function CreateNewBranch({ workspaceId, workspaceBranches }: CreateNewBranchProps) {
+export default function CreateNewBranch({
+    workspaceId,
+    workspaceBranches,
+}: CreateNewBranchProps) {
+    const [open, setOpen] = useState(false);
+
     return (
-        <Dialog>
+        <Dialog
+            open={open}
+            onOpenChange={(isOpen) => setOpen(isOpen)}
+        >
             <DialogTrigger asChild>
                 <Button variant={"outline"}>
                     <Plus />
@@ -59,13 +69,23 @@ export default function CreateNewBranch({ workspaceId, workspaceBranches }: Crea
                         Configure your new branch
                     </DialogDescription>
                 </DialogHeader>
-                <NewBranchForm workspaceId={workspaceId} workspaceBranches={workspaceBranches} />
+                <NewBranchForm
+                    workspaceId={workspaceId}
+                    workspaceBranches={workspaceBranches}
+                    setOpen={setOpen}
+                />
             </DialogContent>
         </Dialog>
     );
 }
 
-function NewBranchForm({ workspaceId, workspaceBranches }: CreateNewBranchProps) {
+interface NewBranchFormProps {
+    workspaceId?: string;
+    workspaceBranches: BranchType[];
+    setOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+function NewBranchForm({ workspaceId, workspaceBranches, setOpen }: NewBranchFormProps) {
     const router = useRouter();
 
     const form = useForm({
@@ -73,7 +93,9 @@ function NewBranchForm({ workspaceId, workspaceBranches }: CreateNewBranchProps)
         defaultValues: {
             name: "",
             option: "dependent",
-            originBranch: workspaceBranches.find((branch) => branch.name === "main")?.id || "",
+            originBranch:
+                workspaceBranches.find((branch) => branch.name === "main")
+                    ?.id || "",
         },
     });
 
@@ -86,6 +108,8 @@ function NewBranchForm({ workspaceId, workspaceBranches }: CreateNewBranchProps)
         }
 
         const result = await createBranchAction(workspaceId, data);
+
+        setOpen(false);
 
         if (result.success) {
             toast.success("Branch created successfully!");
@@ -160,7 +184,10 @@ function NewBranchForm({ workspaceId, workspaceBranches }: CreateNewBranchProps)
                                     </SelectTrigger>
                                     <SelectContent>
                                         {workspaceBranches.map((branch) => (
-                                            <SelectItem key={branch.id} value={branch.id}>
+                                            <SelectItem
+                                                key={branch.id}
+                                                value={branch.id}
+                                            >
                                                 {branch.name}
                                             </SelectItem>
                                         ))}
@@ -171,15 +198,14 @@ function NewBranchForm({ workspaceId, workspaceBranches }: CreateNewBranchProps)
                         </FormItem>
                     )}
                 />
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? (
-                        <>
-                            <Loader /> Creating branch...
-                        </>
-                    ) : (
-                        "Create Branch"
-                    )}
-                </Button>
+                <LoaderButton
+                    loadingText="Creating branch..."
+                    isLoading={form.formState.isSubmitting}
+                    type="submit"
+                    disabled={form.formState.isSubmitting}
+                >
+                    Create Branch
+                </LoaderButton>
             </form>
         </Form>
     );

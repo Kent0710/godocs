@@ -1,20 +1,27 @@
-'use client'
+"use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "../ui/button";
 import { Trash } from "lucide-react";
 import { deleteBranchAction } from "@/actions/branch/delete-branch-action";
 import { toast } from "sonner";
+import LoaderButton from "../reusables/loader-button";
+import { useState } from "react";
 
 interface DeleteBranchProps {
-    workspaceId : string;
+    workspaceId: string;
     currentBranchId: string;
 }
 
-export function DeleteBranch({workspaceId, currentBranchId}: DeleteBranchProps) {
+export function DeleteBranch({
+    workspaceId,
+    currentBranchId,
+}: DeleteBranchProps) {
+    const [isDeleting, setIsDeleting] = useState(false);
     const router = useRouter();
 
     const handleDeleteBranch = async () => {
+        setIsDeleting(true);
+
         const result = await deleteBranchAction(currentBranchId);
 
         if (result.success) {
@@ -22,12 +29,19 @@ export function DeleteBranch({workspaceId, currentBranchId}: DeleteBranchProps) 
         } else {
             toast.error("Failed to delete branch.");
         }
-    }
+
+        setIsDeleting(false);
+    };
 
     return (
-        <Button variant={'outline'} onClick={handleDeleteBranch}>
+        <LoaderButton
+            loadingText="Deleting branch..."
+            variant={"outline"}
+            onClick={handleDeleteBranch}
+            isLoading={isDeleting}
+        >
             <Trash />
             Delete Branch
-        </Button>
+        </LoaderButton>
     );
 }
