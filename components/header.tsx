@@ -122,7 +122,7 @@ export default function Header({ className }: HeaderProps) {
                             variant={"outline"}
                             className="bg-gradient-to-r from-blue-500 via-pink-500 border-white to-purple-500 text-white hover:text-white/80"
                         >
-                            <User /> {username}
+                            <User /> {username === "Honor Kings" ? "Demo User" : username}
                             <ChevronDown />
                         </Button>
                     </DropdownMenuTrigger>
