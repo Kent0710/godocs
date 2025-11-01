@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Plaster, Poetsen_One, Poller_One } from "next/font/google";
+import { Geist, Geist_Mono, Poetsen_One,} from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/providers/theme-provider";

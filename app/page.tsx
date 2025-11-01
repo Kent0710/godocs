@@ -90,7 +90,7 @@ export default function LandingPage() {
                     font-poetsen-one
                     "
                     >
-                        odux
+                        udox
                     </p>
                 </div>
                 <p className="font-medium text-2xl indent-[6rem]">
