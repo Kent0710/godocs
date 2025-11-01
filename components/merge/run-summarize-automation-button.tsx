@@ -32,7 +32,6 @@ export function RunSummarizeAutomationButton({
             return;
         };
 
-x
         const availability = await Summarizer.availability();
         if (availability === "unavailable") {
             toast.error("Summarizer AI model is unavailable in this browser.");
