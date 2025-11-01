@@ -25,11 +25,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { createCommitFormSchema } from "@/lib/form-schemas";
 
-import { GitCommitHorizontal,  Sparkles } from "lucide-react";
+import { GitCommitHorizontal, Sparkles } from "lucide-react";
 import { createCommitAction } from "@/actions/commit/create-commit-action";
 import { usePathname } from "next/navigation";
 import { toast } from "sonner";
 import { constructCommitLanguageModelPrompt } from "@/lib/prompts";
+import LoaderButton from "../reusables/loader-button";
+import { useState } from "react";
 
 interface CommitDialogProps {
     branchId: string;
@@ -103,7 +105,7 @@ function CommitForm({
             branchId,
             data,
             newContent,
-            oldContent,
+            oldContent
         );
 
         if (result.success) {
@@ -116,7 +118,10 @@ function CommitForm({
         }
     };
 
+    const [generating, setGenerating] = useState(false);
     const handleSummarize = async () => {
+        setGenerating(true);
+
         try {
             toast.loading("Checking AI model availability...");
 
@@ -187,6 +192,8 @@ function CommitForm({
             console.error("Prompt API error:", err);
             toast.error("Failed to use Gemini Nano Prompt API.");
         }
+
+        setGenerating(false);
     };
 
     return (
@@ -225,15 +232,25 @@ function CommitForm({
                     )}
                 />
                 <div className="flex gap-2">
-                    <Button type="submit">Commit Changes</Button>
-                    <Button
+                    <LoaderButton
+                        type="submit"
+                        loadingText="Committing..."
+                        disabled={form.formState.isSubmitting}
+                        isLoading={form.formState.isSubmitting}
+                    >
+                        Commit Changes
+                    </LoaderButton>
+                    <LoaderButton
+                        loadingText="Generating..."
+                        disabled={generating}
+                        isLoading={generating}
                         variant={"special"}
                         onClick={handleSummarize}
                         type="button"
                     >
                         <Sparkles fill="white" />
                         Generate commit with AI
-                    </Button>
+                    </LoaderButton>
                 </div>
             </form>
         </Form>
