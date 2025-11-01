@@ -24,7 +24,7 @@ const poetsenOne = Poetsen_One({
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://godux.vercel.app/"), 
-    title: "godux",
+    title: "gudox",
     description:
         "Git-like experience for research paper writing, powered by Chrome's built-in AI. Official entry to Google Chrome Built-in AI Challenge 2025.",
     openGraph: {
