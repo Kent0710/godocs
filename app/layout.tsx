@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Plaster, Poetsen_One, Poller_One } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import { ThemeProvider } from "@/providers/theme-provider";
@@ -16,8 +16,14 @@ const geistMono = Geist_Mono({
     subsets: ["latin"],
 });
 
+const poetsenOne = Poetsen_One({
+    variable: "--font-poetsen-one",
+    subsets: ["latin"],
+    weight: ["400"],
+})
+
 export const metadata: Metadata = {
-    metadataBase: new URL("https://project-launchpad.vercel.app/"), // set to prod url
+    metadataBase: new URL("https://godux.vercel.app/"), 
     title: "godux",
     description:
         "Git-like experience for research paper writing, powered by Chrome's built-in AI. Official entry to Google Chrome Built-in AI Challenge 2025.",
@@ -52,7 +58,7 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <body
-                className={`${geistSans.variable} ${geistMono.variable} antialiased text-sm`}
+                className={`${geistSans.variable} ${geistMono.variable} ${poetsenOne.variable}  antialiased text-sm`}
             >
                 <ThemeProvider
                     attribute="class"

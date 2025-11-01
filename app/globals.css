@@ -140,3 +140,9 @@
         @apply bg-background text-foreground;
     }
 }
+
+@layer utilities {
+    .font-poetsen-one {
+        font-family: var(--font-poetsen-one);
+    }
+}
