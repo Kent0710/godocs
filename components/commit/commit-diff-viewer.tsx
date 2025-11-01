@@ -4,7 +4,7 @@ import { Fragment } from "react";
 
 const BASE_SECTION_CLASSNAME = "p-4 border rounded";
 
-function sanitizeContent(html: string): string {
+export function sanitizeContent(html: string): string {
     const temp = document.createElement("div");
     temp.innerHTML = html;
     return temp.textContent || temp.innerText || "";

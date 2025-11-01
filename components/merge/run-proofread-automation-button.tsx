@@ -6,6 +6,7 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "sonner";
 import { updateMergeAutomationsResult } from "@/actions/merge/update-merge-automations-result-action";
 import { MergeAutomationType } from "@/lib/types";
+import { sanitizeContent } from "../commit/commit-diff-viewer";
 
 interface RunProofreadAutomationsButtonProps {
     mergeId: string;
@@ -22,6 +23,8 @@ export function RunProofreadAutomationsButton({
 
     const handleRunAutomations = async () => {
         setIsRunning(true);
+
+        newContent = sanitizeContent(newContent);
 
         if (!("Proofreader" in self)) {
             toast.warning("Proofreader AI model is not available.");

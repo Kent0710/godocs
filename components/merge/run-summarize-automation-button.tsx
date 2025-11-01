@@ -6,6 +6,7 @@ import { Loader, Workflow } from "lucide-react";
 import { toast } from "sonner";
 import { updateMergeAutomationsResult } from "@/actions/merge/update-merge-automations-result-action";
 import { MergeAutomationType } from "@/lib/types";
+import { sanitizeContent } from "../commit/commit-diff-viewer";
 
 interface RunSummarizeAutomationButtonProps {
     mergeId: string;
@@ -23,12 +24,15 @@ export function RunSummarizeAutomationButton({
     const handleRunSummarizeAutomation = async () => {
         setIsRunning(true);
 
+        newContent = sanitizeContent(newContent);
+
         if (!("Summarizer" in self)) {
             toast.warning("Summarizer AI model is not available.");
             setIsRunning(false);
             return;
         };
 
+x
         const availability = await Summarizer.availability();
         if (availability === "unavailable") {
             toast.error("Summarizer AI model is unavailable in this browser.");
