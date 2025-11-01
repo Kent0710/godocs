@@ -33,17 +33,20 @@ import { Input } from "@/components/ui/input";
 import { createMergeRequestFormSchema } from "@/lib/form-schemas";
 
 import { Merge } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { BranchType } from "@/lib/types";
 import { getWorkspaceBranches } from "@/actions/branch/get-branches-action";
 import { usePathname } from "next/navigation";
 
 import { toast } from "sonner";
 import { createMergeRequestAction } from "@/actions/merge/create-merge-request-action";
+import LoaderButton from "@/components/reusables/loader-button";
 
 export default function CreateMergeRequestDialog() {
+    const [open, setOpen] = useState(false);
+
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
             <DialogTrigger asChild>
                 <Button variant={"outline"}>
                     <Merge />
@@ -58,7 +61,7 @@ export default function CreateMergeRequestDialog() {
                         branches.
                     </DialogDescription>
                 </DialogHeader>
-                <CreateMergeRequestForm />
+                <CreateMergeRequestForm setOpen={setOpen} />
             </DialogContent>
         </Dialog>
     );
@@ -66,7 +69,11 @@ export default function CreateMergeRequestDialog() {
 
 // THE ACTUAL FORM
 
-function CreateMergeRequestForm() {
+interface CreateMergeRequestFormProps {
+    setOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+function CreateMergeRequestForm({ setOpen }: CreateMergeRequestFormProps) {
     const pathname = usePathname();
 
     const [ready, setReady] = useState(false);
@@ -90,6 +97,7 @@ function CreateMergeRequestForm() {
         const workspaceId = pathname.split("/")[3];
 
         const result = await createMergeRequestAction(workspaceId, data);
+        setOpen(false);
 
         if (result.success) {
             toast.success("Merge request created successfully");
@@ -220,7 +228,13 @@ function CreateMergeRequestForm() {
                     </>
                 )}
 
-                <Button type="submit">Create Merge Request</Button>
+                <LoaderButton
+                    type="submit"
+                    loadingText="Creating..."
+                    isLoading={form.formState.isSubmitting}
+                >
+                    Create Merge Request
+                </LoaderButton>
             </form>
         </Form>
     );
