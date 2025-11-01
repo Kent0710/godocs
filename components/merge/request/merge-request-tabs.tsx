@@ -62,17 +62,11 @@ export default function MergeRequestTabs({
             {existingAutomations.map((res, index) => (
                 <TabsContent key={index} value={res.name}>
                     {res.name === "proofread" && (
-                        <>
-                            <RunProofreadAutomationsButton
-                                mergeId={mergeId}
-                                newContent={newContent}
-                                setExistingAutomations={setExistingAutomations}
-                            />
-
-                            <pre>
-                                {JSON.stringify(res, null, 2)}
-                            </pre>
-                        </>
+                        <RunProofreadAutomationsButton
+                            mergeId={mergeId}
+                            newContent={newContent}
+                            setExistingAutomations={setExistingAutomations}
+                        />
                     )}
                     {res.name === "summarize" && (
                         <RunSummarizeAutomationButton
