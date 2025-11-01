@@ -411,7 +411,7 @@ export default function DocumentArea() {
             </div>
             <div
                 ref={editableRef}
-                className="w-[794px] h-[1123px] border mx-auto p-8 focus:outline-none"
+                className="w-[794px] h-[1123px] border mx-auto p-8 focus:outline-none bg-card"
                 contentEditable
                 suppressContentEditableWarning
                 onInput={handleInput}

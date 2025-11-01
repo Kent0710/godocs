@@ -4,7 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { Button } from "./ui/button";
-import { ChevronDown, LogOut, User } from "lucide-react";
+import { BookOpen, ChevronDown, Home, LogOut, User } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -17,6 +17,9 @@ import { getUsername } from "@/actions/user/get-username";
 import { signOut } from "@/actions/auth";
 import { ThemeToggle } from "./ui/theme-toggle";
 
+import Image from "next/image";
+import GODUXLOGO from "@/public/godux-logo.png";
+
 interface HeaderProps {
     className?: string;
 }
@@ -28,7 +31,20 @@ export default function Header({ className }: HeaderProps) {
 
     const pathname = usePathname();
     const navs = useMemo(
-        () => [{ label: "Home", href: "/home", active: pathname === "/home" }],
+        () => [
+            {
+                label: "Home",
+                icon: Home,
+                href: "/home",
+                active: pathname === "/home",
+            },
+            {
+                label: "Documentation",
+                icon: BookOpen,
+                href: "/documentation",
+                active: pathname === "/documentation",
+            },
+        ],
         [pathname]
     );
 
@@ -44,20 +60,32 @@ export default function Header({ className }: HeaderProps) {
     return (
         <header
             className={twMerge(
-                `flex items-center justify-between w-full py-2 px-8 border-b bg-foreground/10`,
+                `flex items-center justify-between w-full py-2 px-8 border-b bg-card text-card-foreground`,
                 className
             )}
         >
             {/* left section  */}
-            <section className="flex items-center gap-10">
-                <p className="font-bold">GOODOCS</p>
+            <section className="flex items-center gap-16">
+                <div className="flex items-center gap-2">
+                    <Image
+                        src={GODUXLOGO}
+                        alt="Godux Logo"
+                        width={40}
+                        height={40}
+                        className="w-5 h-5"
+                    />
+                    <p className="font-bold text-blue-600">godux</p>
+                </div>
 
-                <ul>
+                <ul className="flex items-center gap-10">
                     {navs.map((nav) => (
                         <li
                             key={nav.href}
-                            className={twMerge(nav.active ? "underline" : "")}
+                            className={twMerge('flex items-center gap-2', nav.active ? "text-blue-600 font-medium border-b pb-0.5 rounded-b-sm px-1" : "")}
                         >
+                            <nav.icon
+                                className="w-4 h-4"
+                            />
                             <Link href={nav.href}>{nav.label}</Link>
                         </li>
                     ))}
@@ -68,7 +96,10 @@ export default function Header({ className }: HeaderProps) {
             <section className="flex items-center gap-2">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant={"outline"}>
+                        <Button
+                            variant={"outline"}
+                            className="bg-gradient-to-r from-blue-500 via-pink-500 border-white to-purple-500 text-white hover:text-white/80"
+                        >
                             <User /> {username}
                             <ChevronDown />
                         </Button>
@@ -76,6 +107,7 @@ export default function Header({ className }: HeaderProps) {
                     <DropdownMenuContent>
                         <Button
                             variant={"ghost"}
+                            className="border-none shadow-none"
                             onClick={async () => {
                                 await signOut();
                                 router.push("/signIn");

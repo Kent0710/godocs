@@ -31,7 +31,7 @@ export function BranchDropdown({
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant={"outline"}>
+                <Button>
                     <GitBranch /> {currentBranchName} <ChevronDown />
                 </Button>
             </DropdownMenuTrigger>

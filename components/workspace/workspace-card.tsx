@@ -11,7 +11,7 @@ interface WorkspaceCardProps {
 
 export function WorkspaceCard({ workspace }: WorkspaceCardProps) {
     return (
-        <li className="p-4 rounded-lg bg-foreground/5 border">
+        <li className="p-4 rounded-lg bg-card text-card-foreground border">
             <Link
                 href={`/workspace/${workspace.id}?branch=${workspace.mainBranchId}`}
             >
