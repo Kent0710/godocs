@@ -92,7 +92,7 @@ export default function Header({ className }: HeaderProps) {
                         height={40}
                         className="w-5 h-5"
                     />
-                    <p className="font-bold text-blue-600">godux</p>
+                    <p className="font-bold text-blue-600">gudox</p>
                 </div>
 
                 <ul className="flex items-center gap-6">
@@ -122,7 +122,7 @@ export default function Header({ className }: HeaderProps) {
                             variant={"outline"}
                             className="bg-gradient-to-r from-blue-500 via-pink-500 border-white to-purple-500 text-white hover:text-white/80"
                         >
-                            <User /> {username === "Honor Kings" ? "Demo User" : username}
+                            <User /> {username}
                             <ChevronDown />
                         </Button>
                     </DropdownMenuTrigger>
