@@ -67,6 +67,22 @@ export async function joinWorkspace(code: string) {
             name: user.name || "Unnamed User",
         });
 
+        // get the main branch for the workspace
+        const branchQuery = query(
+            collection(db, "branch"),
+            where("workspaceId", "==", workspaceId),
+            where("name", "==", "main")
+        );
+
+        const branchSnapshot = await getDocs(branchQuery);
+
+        let mainBranchId = null;
+        if (!branchSnapshot.empty) {
+            mainBranchId = branchSnapshot.docs[0].id;
+        } else {
+            throw new Error("Main branch not found for the workspace.");
+        }
+
 
         revalidatePath('/home');
 
@@ -74,6 +90,7 @@ export async function joinWorkspace(code: string) {
             success: true,
             workspaceId,
             message: "Successfully joined workspace.",
+            defaultBranchId: mainBranchId,
         };
     } catch (error) {
         throw new Error("Error joining workspace: " + (error as Error).message);

@@ -1,4 +1,4 @@
-    import {
+import {
     PageContainer,
     PageContainerHeader,
     PageContainerMain,
@@ -7,7 +7,7 @@ import { Paragraph, Title } from "@/components/reusables/texts";
 import WorkspaceServer from "@/components/workspace/workspace-server";
 import { Suspense } from "react";
 
-export default function HomePage() {    
+export default function HomePage() {
     return (
         <PageContainer>
             {/* header  */}

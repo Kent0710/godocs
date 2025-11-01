@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { Loader, UsersRound } from "lucide-react";
+import { UsersRound } from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -29,10 +29,15 @@ import { toast } from "sonner";
 
 import { joinWorkspaceFormSchema } from "@/lib/form-schemas";
 import { joinWorkspace } from "@/actions/workspace/join-workspace-action";
+import LoaderButton from "../reusables/loader-button";
+import { SetStateAction, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function JoinNewWorkspace() {
+    const [open, setOpen] = useState(false);
+
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
             <DialogTrigger asChild>
                 <Button variant={"secondary"}>
                     <UsersRound className="mr-2" />
@@ -46,7 +51,7 @@ export default function JoinNewWorkspace() {
                         Enter the workspace code to join an existing workspace.
                     </DialogDescription>
                 </DialogHeader>
-                <JoinWorkspaceForm />
+                <JoinWorkspaceForm setOpen={setOpen} />
             </DialogContent>
         </Dialog>
     );
@@ -54,7 +59,13 @@ export default function JoinNewWorkspace() {
 
 // THE ACTUAL FORM
 
-function JoinWorkspaceForm() {
+interface JoinWorkspaceFormProps {
+    setOpen: React.Dispatch<SetStateAction<boolean>>;
+}
+
+function JoinWorkspaceForm({ setOpen }: JoinWorkspaceFormProps) {
+    const router = useRouter();
+
     const form = useForm({
         resolver: zodResolver(joinWorkspaceFormSchema),
         defaultValues: {
@@ -62,24 +73,26 @@ function JoinWorkspaceForm() {
         },
     });
 
-    const onSubmit = async (
-        data: z.infer<typeof joinWorkspaceFormSchema>
-    ) => {
+    const onSubmit = async (data: z.infer<typeof joinWorkspaceFormSchema>) => {
         const result = await joinWorkspace(data.code);
+
+        setOpen(false);
 
         if (result.success) {
             toast.success("Successfully joined the workspace!");
+            form.reset();
+
+            router.push(
+                `/workspace/${result.workspaceId}?branch=${result.defaultBranchId}`
+            );
         } else {
             toast.error(`Failed to join workspace.`);
-        };
+        }
     };
 
     return (
         <Form {...form}>
-            <form
-                onSubmit={form.handleSubmit(onSubmit)}
-                className="space-y-4"
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                     control={form.control}
                     name="code"
@@ -96,16 +109,14 @@ function JoinWorkspaceForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? (
-                        <>
-                            <Loader className="animate-spin" />
-                            Joining...
-                        </>
-                    ) : (
-                        "Join Workspace"
-                    )}
-                </Button>
+                <LoaderButton
+                    loadingText="Joining..."
+                    type="submit"
+                    disabled={form.formState.isSubmitting}
+                    isLoading={form.formState.isSubmitting}
+                >
+                    Join Workspace
+                </LoaderButton>
             </form>
         </Form>
     );

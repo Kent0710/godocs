@@ -1,19 +1,24 @@
 "use client";
 
 import { Trash } from "lucide-react";
-import { Button } from "../ui/button";
 import { deleteWorkspace } from "@/actions/workspace/delete-workspace";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import LoaderButton from "../reusables/loader-button";
+import { useState } from "react";
 
 interface DeleteWorkspaceProps {
     workspaceId: string;
 }
 
 export default function DeleteWorkspace({ workspaceId }: DeleteWorkspaceProps) {
+    const [isLoading, setIsLoading] = useState(false);
+
     const router = useRouter();
 
     const handleDeleteWorkspace = async () => {
+        setIsLoading(true);
+
         const result = await deleteWorkspace(workspaceId);
 
         if (result.success) {
@@ -22,12 +27,19 @@ export default function DeleteWorkspace({ workspaceId }: DeleteWorkspaceProps) {
         } else {
             toast.error("Failed to delete workspace.");
         }
+
+        setIsLoading(false);
     };
 
     return (
-        <Button variant={"outline"} onClick={handleDeleteWorkspace}>
+        <LoaderButton
+            variant={"outline"}
+            onClick={handleDeleteWorkspace}
+            isLoading={isLoading}
+            loadingText="Deleting..."
+        >
             <Trash />
             Delete Workspace
-        </Button>
+        </LoaderButton>
     );
 }

@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-import { FilePlus2, Loader } from "lucide-react";
+import { FilePlus2} from "lucide-react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -30,10 +30,14 @@ import { toast } from "sonner";
 import { createNewWorkspaceFormSchema } from "@/lib/form-schemas";
 import { createWorkspace } from "@/actions/workspace/create-workspace";
 import { useRouter } from "next/navigation";
+import LoaderButton from "../reusables/loader-button";
+import { useState } from "react";
 
 export default function CreateNewWorkspace() {
+    const [open, setOpen] = useState(false);
+
     return (
-        <Dialog>
+        <Dialog open={open} onOpenChange={(isOpen) => setOpen(isOpen)}>
             <DialogTrigger asChild>
                 <Button>
                     <FilePlus2 className="mr-2" />
@@ -47,7 +51,9 @@ export default function CreateNewWorkspace() {
                         Give your new workspace a name and optional description.
                     </DialogDescription>
                 </DialogHeader>
-                <CreateNewWorkspaceForm />
+                <CreateNewWorkspaceForm
+                    setOpen={setOpen}
+                />
             </DialogContent>
         </Dialog>
     );
@@ -55,7 +61,11 @@ export default function CreateNewWorkspace() {
 
 // THE ACTUAL FORM
 
-function CreateNewWorkspaceForm() {
+interface CreateNewWorkspaceFormProps {
+    setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function CreateNewWorkspaceForm({ setOpen }: CreateNewWorkspaceFormProps) {
     const router = useRouter();
 
     const form = useForm({
@@ -70,11 +80,17 @@ function CreateNewWorkspaceForm() {
         data: z.infer<typeof createNewWorkspaceFormSchema>
     ) => {
         const result = await createWorkspace(data);
+
+        setOpen(false);
+
         if (result.success) {
+
             toast.success("Workspace created successfully!");
             form.reset();
 
-            router.push(`/workspace/${result.workspaceId}?branch=${result.defaultBranchId}`);
+            router.push(
+                `/workspace/${result.workspaceId}?branch=${result.defaultBranchId}`
+            );
         } else {
             toast.error("Failed to create workspace.");
         }
@@ -115,16 +131,14 @@ function CreateNewWorkspaceForm() {
                         </FormItem>
                     )}
                 />
-                <Button type="submit" disabled={form.formState.isSubmitting}>
-                    {form.formState.isSubmitting ? (
-                        <>
-                            <Loader className="animate-spin" /> Creating
-                            workspace...
-                        </>
-                    ) : (
-                        "Create Workspace"
-                    )}
-                </Button>
+                <LoaderButton
+                    loadingText="Creating..."
+                    type="submit"
+                    disabled={form.formState.isSubmitting}
+                    isLoading={form.formState.isSubmitting}
+                >
+                    Create Workspace
+                </LoaderButton>
             </form>
         </Form>
     );
