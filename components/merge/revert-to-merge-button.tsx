@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "../ui/button";
-import { Loader, Undo } from "lucide-react";
+import {Undo } from "lucide-react";
 import { toast } from "sonner";
 import { revertToMerge } from "@/actions/merge/revert-to-merge-action";
+import LoaderButton from "../reusables/loader-button";
 
 interface RevertToMergeButtonProps {
     branchId: string;
@@ -41,21 +41,14 @@ export function RevertToMergeButton({
     };
 
     return (
-        <Button
+        <LoaderButton
+            loadingText="Reverting..."
+            isLoading={isReverting}
             variant={"outline"}
             disabled={isReverting}
             onClick={handleRevert}
         >
-            {isReverting ? (
-                <>
-                    <Loader className="animate-spin" />
-                    Reverting...
-                </>
-            ) : (
-                <>
-                    <Undo /> Revert to Merge
-                </>
-            )}
-        </Button>
+            <Undo /> Revert to Merge
+        </LoaderButton>
     );
 }

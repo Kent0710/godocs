@@ -1,11 +1,11 @@
 "use client";
 
-import { HistoryIcon, Loader } from "lucide-react";
-import { Button } from "../ui/button";
+import { HistoryIcon } from "lucide-react";
 
 import { useState } from "react";
 import { revertBranchToCommit } from "@/actions/commit/revert-branch-to-commit-action";
 import { toast } from "sonner";
+import LoaderButton from "../reusables/loader-button";
 
 interface RevertToCommitButtonProps {
     branchId: string;
@@ -33,20 +33,15 @@ export function RevertToCommitButton({
     };
 
     return (
-        <Button variant={"outline"} onClick={handleRevert}>
-            {isReverting ? (
-                <>
-                    <Loader
-                        className="animate-spin"
-                    />
-                    Reverting...
-                </>
-            ) : (
-                <>
-                    <HistoryIcon />
-                    Revert To This Version
-                </>
-            )}
-        </Button>
+        <LoaderButton
+            loadingText="Reverting..."
+            disabled={isReverting}
+            variant={"outline"}
+            onClick={handleRevert}
+            isLoading={isReverting}
+        >
+            <HistoryIcon />
+            Revert To This Version
+        </LoaderButton>
     );
 }
