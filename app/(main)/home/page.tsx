@@ -11,8 +11,8 @@ export default function HomePage() {
     return (
         <PageContainer>
             {/* header  */}
-            <PageContainerHeader>
-                <Title>Dashboard</Title>
+            <PageContainerHeader className="pb-6 border-b mb-4">
+                <Title className="text-primary">Dashboard</Title>
                 <Paragraph>
                     Welcome back! Here is an overview of your workspaces and
                     recent activity.

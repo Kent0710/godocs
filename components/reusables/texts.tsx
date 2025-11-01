@@ -20,5 +20,5 @@ export function SubHeading({ children, className }: TextProps) {
 }
 
 export function Paragraph({ children, className }: TextProps) {
-    return <p className={`${className} text-base`}>{children}</p>;
+    return <p className={`${className} text-muted-foreground`}>{children}</p>;
 }
